@@ -77,13 +77,16 @@ app.register_blueprint(sse,url_prefix='/stream')
 
 # # import models in main
 from application.models import users, books, reviews
+from utils.default_data import create_default_data
 
 with app.app_context():
     db.create_all()
     print('All models created.')
-    # create default roles and admin
+    # create default roles and librarian
+    create_default_data(librarian_email='nibedita.6302@gmail.com', yourname='Nibedita C.')
     # other default functions
-    # print('All default data created.')
+    # ...
+    print('All default data created.')
 
 # """ except Exception as e:
 #   if 'UNIQUE constraint failed' in str(e) or 'already exists' in str(e):

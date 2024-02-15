@@ -3,17 +3,13 @@ from ..database import db
 from sqlalchemy import Integer, String, Boolean, DateTime, Float, ForeignKey,  Column
 
 ## many-to-many relationship table between Authors and Books
-class AuthorBook(db.Model): 
-    __tablename__='author_book'
-    b_id = Column(Integer(), ForeignKey('books.b_id'), primary_key=True) # books
-    a_id = Column(Integer(), ForeignKey('authors.a_id'), primary_key=True)  # authors
-    read_count = Column(Integer(), nullable=False, default=0)
-    bought_count = Column(Integer(), nullable=False, default=0)
-
-    def __repr__(self) -> str:
-        return f"Author-Book - {self.b_id}:{self.a_id}"
+AuthorBook = db.Table('author_book',
+    Column('b_id', Integer(), ForeignKey('books.b_id'), primary_key=True), # books
+    Column('a_id',Integer(), ForeignKey('authors.a_id'), primary_key=True),  # authors
+    Column('read_count',Integer(), nullable=False, default=0),
+    Column('bought_count', Integer(), nullable=False, default=0)
+)
     
-
 ## many-to-many relationship table between Users and Books
 class UserBook(db.Model): 
     __tablename__='user_book'
@@ -25,6 +21,9 @@ class UserBook(db.Model):
     return_date = Column(DateTime())
     read_count = Column(Integer(), nullable=False, default=0)
     bought_count = Column(Integer(), nullable=False, default=0)
+    #relationships
+    issuer = db.relationship('Users', back_populates='user_book', cascade='all, delete')
+    books = db.relationship('Books', back_populates='user_book', cascade='all, delete')
 
     def __repr__(self) -> str:
         return f"User-Book - {self.b_id}:{self.users_id}"
@@ -46,6 +45,7 @@ class Books(db.Model):
     is_deleted = Column(Boolean(), nullable=False, default=False)
     #relationship
     reviews = db.relationship('Reviews', cascade='all, delete-orphan')
+    user_book = db.relationship('UserBook', back_populates='books', cascade='all, delete')
 
     def __repr__(self) -> str:
         deleted = ''
@@ -76,8 +76,8 @@ class Author(db.Model):
     a_name = Column(String(), nullable=False)   
     about_author = Column(String(), nullable=False)   
     #relationships
-    biblography = db.relationship('Books', secondary=AuthorBook, backref='writer', 
-                                  cascade='all, delete-orphan')
+    biblography = db.relationship('Books', secondary=AuthorBook, backref='writer',
+                                   cascade='all, delete')
 
     def __repr__(self) -> str:
         return f"Authors - {self.a_id}:{self.a_name}"

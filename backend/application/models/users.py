@@ -1,8 +1,8 @@
 from ..database import db 
-from books import UserBook
+from .books import UserBook
 from utils.credentials import check_password
 from flask_security import UserMixin, RoleMixin
-from sqlalchemy import Integer, String, Boolean, DateTime, Float, ForeignKey,  Column, relationship
+from sqlalchemy import Integer, String, Boolean, DateTime, Float, ForeignKey,  Column
 
 class RoleUsers(db.Model):
     __tablename__='role_user'
@@ -18,8 +18,8 @@ class Users(db.Model, UserMixin):
     active = Column(Boolean, nullable=False, default=True) 
     fs_uniquifier = Column(String(255), unique=True) 
     #relationships
-    roles = relationship('Role', secondary=RoleUsers, backref='assignedTo', cascade='all, delete-orphans')
-    mybooks = relationship('Books', secondary=UserBook, backref='issuedBy', cascade='all, delete-orphans')
+    roles = db.relationship('Role', secondary=RoleUsers, backref='assignedTo', cascade='all, delete-orphan')
+    mybooks = db.relationship('Books', secondary=UserBook, backref='issuedBy', cascade='all, delete-orphan')
     
     def match_password(self, password):
         return  check_password(password, self.password)

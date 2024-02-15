@@ -76,14 +76,14 @@ print("Create app complete")
 app.register_blueprint(sse,url_prefix='/stream')
 
 # # import models in main
-# from .application.models.users import users
+from application.models import users, books, reviews
 
-# with app.app_context():
-#     db.create_all()
-#     print('All models created.')
-#     # create default roles and admin
-#     # other default functions
-#     print('All default data created.')
+with app.app_context():
+    db.create_all()
+    print('All models created.')
+    # create default roles and admin
+    # other default functions
+    # print('All default data created.')
 
 # """ except Exception as e:
 #   if 'UNIQUE constraint failed' in str(e) or 'already exists' in str(e):
@@ -92,9 +92,9 @@ app.register_blueprint(sse,url_prefix='/stream')
 #     raise Exception(e)
 #  """
 
-# @login_manager.user_loader
-# def load_user(user_id):
-#    return users.query.get(int(user_id)) 
+@login_manager.user_loader
+def load_user(user_id):
+   return users.query.get(int(user_id)) 
 
 # # Setup all APIs
 # from .application.api.configure_routes import config_all_resource

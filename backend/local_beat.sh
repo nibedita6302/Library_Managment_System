@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #! /bin/sh
 echo "======================================================================"
 echo "Welcome to to the setup. This will setup the local virtual env." 
@@ -18,5 +17,3 @@ fi
 export ENV=development
 celery -A main.celery beat -l info
 # deactivate
-=======
->>>>>>> main

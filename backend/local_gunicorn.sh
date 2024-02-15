@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #! /bin/sh
 echo "======================================================================"
 echo "Welcome to to the setup. This will setup the local virtual env." 
@@ -18,5 +17,3 @@ fi
 export ENV=stage
 gunicorn main:app --worker-class gevent --bind 0.0.0.0:8000 --workers=2
 # deactivate
-=======
->>>>>>> main

@@ -1,7 +1,8 @@
 import os
 basedir = os.path.abspath(os.path.dirname(__file__))
-topdir = os.path.abspath(os.path.dirname(os.path.dirname(basedir)))
+topdir = os.path.abspath(os.path.dirname(basedir))
 print(basedir, topdir)
+print(os.path.join(basedir, "db_directory/"))
 
 class Config():
     DEBUG = False
@@ -20,9 +21,9 @@ class Config():
     CACHE_REDIS_DB = 9    
 
 class LocalDevelopmentConfig(Config):
-    SQLITE_DB_DIR = os.path.join(basedir, "../db_directory")
+    SQLITE_DB_DIR = os.path.join(basedir, "db_directory/")
     UPLOAD_FOLDER=os.path.join(topdir,'frontend/src/assets/')
-    SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(SQLITE_DB_DIR, "library-managment-v1.sqlite3")
+    SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(SQLITE_DB_DIR, "library-managment-v1o1.sqlite3")
     DEBUG = True
     LOGIN_URL = 'http://localhost:8080/login'
     SECRET_KEY =  "@@secretkey@@"

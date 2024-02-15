@@ -2,10 +2,10 @@ import os
 from flask import Flask, Blueprint
 from flask_restful import Api
 from flask_cors import CORS
-from .config import LocalDevelopmentConfig, StageConfig
+from config import LocalDevelopmentConfig, StageConfig
 from application.database import db
 from flask_security import Security
-from .security import datastore
+from security import datastore
 from application.jobs import workers
 #from sqlalchemy.orm import scoped_session, sessionmaker
 from flask_login import LoginManager
@@ -75,31 +75,31 @@ print("Create app complete")
 #setup blueprint
 app.register_blueprint(sse,url_prefix='/stream')
 
-# import models in main
-from .application.models.users import users
+# # import models in main
+# from .application.models.users import users
 
-with app.app_context():
-    db.create_all()
-    print('All models created.')
-    # create default roles and admin
-    # other default functions
-    print('All default data created.')
+# with app.app_context():
+#     db.create_all()
+#     print('All models created.')
+#     # create default roles and admin
+#     # other default functions
+#     print('All default data created.')
 
-""" except Exception as e:
-  if 'UNIQUE constraint failed' in str(e) or 'already exists' in str(e):
-    print('Ignored Unique Constraint Failed due to duplicate request')
-  else:
-    raise Exception(e)
- """
+# """ except Exception as e:
+#   if 'UNIQUE constraint failed' in str(e) or 'already exists' in str(e):
+#     print('Ignored Unique Constraint Failed due to duplicate request')
+#   else:
+#     raise Exception(e)
+#  """
 
-@login_manager.user_loader
-def load_user(user_id):
-   return users.query.get(int(user_id)) 
+# @login_manager.user_loader
+# def load_user(user_id):
+#    return users.query.get(int(user_id)) 
 
-# Setup all APIs
-from .application.api.configure_routes import config_all_resource
+# # Setup all APIs
+# from .application.api.configure_routes import config_all_resource
 
-config_all_resource(api) 
+# config_all_resource(api) 
 
 if __name__ == '__main__':
   # Run the Flask app

@@ -1,8 +1,8 @@
 import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 topdir = os.path.abspath(os.path.dirname(basedir))
-print(basedir, topdir)
-print(os.path.join(basedir, "db_directory/"))
+# print(basedir, topdir)
+# print(os.path.join(basedir, "db_directory/"))
 
 class Config():
     DEBUG = False
@@ -10,7 +10,7 @@ class Config():
     SQLALCHEMY_DATABASE_URI = None
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     WTF_CSRF_ENABLED = False
-    SECURITY_TOKEN_AUTHENTICATION_HEADER = "Authentication-Token"
+    SECURITY_TOKEN_AUTHENTICATION_HEADER = "Authorization"
     CELERY_BROKER_URL = "redis://localhost:6379/1"
     CELERY_RESULT_BACKEND = "redis://localhost:6379/2"
     REDIS_URL = "redis://localhost:6379"

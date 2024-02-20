@@ -73,10 +73,13 @@ app ,api, celery= create_app()
 print("Create app complete")
 
 #setup blueprint
-app.register_blueprint(sse,url_prefix='/stream')
+#app.register_blueprint(sse,url_prefix='/stream')
 
 # # import models in main
-from application.models import users, books, reviews
+from application.models.users import Users, Role, RoleUsers
+from application.models.books import Books, Sections, UserBook, Author, AuthorBook
+from application.models.reviews import Reviews
+from application.controller import login
 from utils.default_data import create_default_data
 
 with app.app_context():
@@ -97,7 +100,13 @@ with app.app_context():
 
 @login_manager.user_loader
 def load_user(user_id):
-   return users.query.get(int(user_id)) 
+   return Users.query.get(int(user_id)) 
+
+""" 
+@app.route('/test1')
+def test():
+   return "this is test1 from main.py"
+"""
 
 # # Setup all APIs
 # from .application.api.configure_routes import config_all_resource

@@ -10,6 +10,6 @@ def create_default_data(librarian_email, yourname):
     db.session.commit()  
     if not datastore.find_user(email=librarian_email):
         #creating the only Librarian
-        lib1 = datastore.create_user(email=librarian_email, name=yourname, password=hash_password(''))
+        lib1 = datastore.create_user(email=librarian_email, name=yourname, password=hash_password('Lib@1234'))
         datastore.add_role_to_user(lib1, 'librarian')
     db.session.commit() 

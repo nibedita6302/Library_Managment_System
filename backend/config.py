@@ -25,7 +25,7 @@ class LocalDevelopmentConfig(Config):
     UPLOAD_FOLDER=os.path.join(topdir,'frontend/src/assets/')
     SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(SQLITE_DB_DIR, "library-managment-v1o1.sqlite3")
     DEBUG = True
-    LOGIN_URL = 'http://localhost:8080/login'
+    #LOGIN_URL = 'http://localhost:8000/login'
     SECRET_KEY =  "@@secretkey@@"
     SECURITY_PASSWORD_HASH = "bcrypt"    
     SECURITY_PASSWORD_SALT = "!!secret..salt!!" # Read from ENV in your case

@@ -11,12 +11,13 @@ def check_password(plain_pw, hash_pw):
 def validate_email(email):
     if email.count('@')==1:
         front, back = email.split('@')
-        pattern = re.compile(r'^[a-zA-Z0-9]+(?:[._][a-zA-Z0-9]+)*$')
+        front_pattern = re.compile(r'^[a-zA-Z0-9]+(?:[._][a-zA-Z0-9]+)*$')
+        back_pattern = re.compile(r'^[a-zA-Z0-9]+[.][a-zA-Z]+$')
         # Explaination
         # Alpha numeric (1 or more) followed by '.' or '_' which is immediately
         # followed by Alpha numeric characters (1 or more)
         # No 2 special char occur together.
-        if re.match(pattern, front) and re.match(pattern, back):
+        if re.match(front_pattern, front) and re.match(back_pattern, back):
             return True
     return False
 
@@ -32,5 +33,5 @@ def validate_password(password):
 
 
 # Testing
-# print(validate_email('hello1._2@hello'))
+# print(validate_email('hello1.2@hello.com'))
 # print( validate_password('hello12@A') )

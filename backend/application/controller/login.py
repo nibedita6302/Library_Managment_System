@@ -35,7 +35,6 @@ def logout():
         return jsonify({'message':{'success':'Logout Successfull'}}), 200
     else:
         return jsonify({'message':{'error': 'Please Login first!'}}), 400
-    
 
 @app.route("/test2", methods=["GET"])
 def test():

@@ -75,11 +75,13 @@ print("Create app complete")
 #setup blueprint
 #app.register_blueprint(sse,url_prefix='/stream')
 
-# # import models in main
+## import models in main
 from application.models.users import Users, Role, RoleUsers
 from application.models.books import Books, Sections, UserBook, Author, AuthorBook
 from application.models.reviews import Reviews
+## Import controllers in main
 from application.controller import login
+
 from utils.default_data import create_default_data
 
 with app.app_context():
@@ -108,10 +110,9 @@ def test():
    return "this is test1 from main.py"
 """
 
-# # Setup all APIs
-# from .application.api.configure_routes import config_all_resource
-
-# config_all_resource(api) 
+## Setup all APIs
+from application.api.configure_routes import config_all_resource
+config_all_resource(api) 
 
 if __name__ == '__main__':
   # Run the Flask app

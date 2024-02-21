@@ -20,8 +20,8 @@ class UserBook(db.Model):
     due_date = Column(DateTime(), default=datetime.now()+timedelta(days=7), nullable=False)
     return_date = Column(DateTime())
     read_count = Column(Integer(), nullable=False, default=0)
-    bought_count = Column(Integer(), nullable=False, default=0)
-    #relationships
+    bought_price = Column(Integer(), nullable=False, default=0)
+    #relationships 
     issuer = db.relationship('Users', back_populates='user_book', cascade='all, delete')
     books = db.relationship('Books', back_populates='user_book', cascade='all, delete')
 

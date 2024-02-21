@@ -24,6 +24,7 @@ def login():
         "user_id": user.id,
         "username": user.name, 
         "email": user.email,
+        "role": user.roles[0].id,
         'message': {'success':f'Welcome {user.name}!'}
     }), 200
 

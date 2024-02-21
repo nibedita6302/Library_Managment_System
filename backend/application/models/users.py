@@ -5,7 +5,7 @@ from flask_security import UserMixin, RoleMixin
 from sqlalchemy import Integer, String, Boolean, DateTime, Float, ForeignKey,  Column
 
 RoleUsers = db.Table('role_user',
-    Column('user_id', Integer(), ForeignKey('users.id'), primary_key=True), # users
+    Column('user_id', Integer(), ForeignKey('users.id', ondelete="CASCADE"), primary_key=True), # users 
     Column('role_id', Integer(), ForeignKey('role.id'), primary_key=True) # role
 )
 
@@ -18,7 +18,7 @@ class Users(db.Model, UserMixin):
     active = Column(Boolean, nullable=False, default=True) 
     fs_uniquifier = Column(String(255), unique=True) 
     #relationships
-    roles = db.relationship('Role', secondary=RoleUsers, backref='assignedTo', cascade='all, delete')
+    roles = db.relationship('Role', secondary=RoleUsers, backref='assignedTo') 
     user_book = db.relationship('UserBook', back_populates='issuer', cascade='all, delete')
     
     def match_password(self, password):

@@ -16,7 +16,6 @@ section_field = {
     # 'is_deleted': fields.Boolean
 }
 
-
 ## SECTION CRUD
 class ManageSections(Resource):
     def get(self, section_id):      ## View Section by ID

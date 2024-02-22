@@ -97,7 +97,7 @@ class UserProfile(Resource):
         user = Users.query.get(user_id)
         if user:
             if user.roles[0].name == 'librarian':
-                return {'message': {'error': 'Unauthorized Access'}}, 401
+                return {'message': {'error': 'Unauthorized Delete Operation'}}, 401
             elif confirm:
                 user_role = db.session.query(RoleUsers).filter_by(user_id=user_id).first()
                 print(user_role)

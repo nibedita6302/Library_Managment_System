@@ -11,7 +11,8 @@ def user_api(api):
                      "/user/delete/<int:user_id>/<int:confirm>")
 
 def section_api(api):
-    api.add_resource(ManageSections, '/section/<int:section_id>')
+    api.add_resource(ManageSections, '/section/<int:section_id>', "/section/create", 
+                     "/section/update/<int:section_id>")
     api.add_resource(DisplaySections, '/home/sections')
 
 from .test import Test

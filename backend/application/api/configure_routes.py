@@ -12,7 +12,7 @@ def user_api(api):
 
 def section_api(api):
     api.add_resource(ManageSections, '/section/<int:section_id>', "/section/create", 
-                     "/section/update/<int:section_id>")
+                     "/section/update/<int:section_id>", "/section/delete/<int:section_id>/<int:confirm>")
     api.add_resource(DisplaySections, '/home/sections')
 
 from .test import Test

@@ -32,6 +32,7 @@ class ManageSections(Resource):
         ## Check if Section name is Unique
         if ('s_name' in formData) and (formData['s_name']!='') and \
             (Sections.query.filter_by(s_name=formData['s_name']).first() is None):
+            ## What if similar name exists for Section but is deleted ??
             section = Sections(**formData)
         else:
             return {'message': {'error': 'Section Name must be Unique'}}, 400
@@ -83,8 +84,15 @@ class ManageSections(Resource):
         
     @auth_required('token')
     @roles_required('librarian')
-    def delete(self, section_id):       ## Delete Section 
-        pass
+    def delete(self, section_id, confirm):       ## Delete Section 
+        if confirm:
+            section = Sections.query.get(section_id)
+            section.is_deleted = True 
+            ## Also Delete Image ?? 
+            db.session.commit()
+            return {'message': {'success': 'Deleted Section'}}, 200
+        else:
+            return {'message': {'success': 'Canceled Delete'}}, 200
 
 class DisplaySections(Resource):
     def get(self):      ## Display all Sections

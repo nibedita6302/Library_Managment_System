@@ -29,7 +29,7 @@ class UserBook(db.Model):
         return f"User-Book - {self.b_id}:{self.users_id}"
 
 class Books(db.Model):
-    __tablename__='books'
+    __tablename__='books' 
     b_id = Column(Integer(), autoincrement=True, primary_key=True)
     s_id = Column(Integer(), ForeignKey('sections.s_id'), nullable=False) # sections
     a_id = Column(Integer(), ForeignKey('authors.a_id'), nullable=False)  # authors
@@ -56,7 +56,7 @@ class Books(db.Model):
 class Sections(db.Model):
     __tablename__='sections'
     s_id = Column(Integer(), autoincrement=True, primary_key=True)
-    s_name = Column(String(), nullable=False)
+    s_name = Column(String(), unique=True, nullable=False)
     s_image = Column(String(), unique=True, nullable=False)
     book_count = Column(Integer(), nullable=False, default=0)
     # Relationship between Books and Other tables may get disrupted if deleted.

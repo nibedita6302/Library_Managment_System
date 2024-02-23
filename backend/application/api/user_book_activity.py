@@ -6,5 +6,5 @@ from flask import request, jsonify, current_app as app
 from flask_login import current_user
 from flask_security import auth_required, roles_required
 
-from application.models.books import Books
-from application.models.user_book_activity import UserBook
+from application.models.user_book_activity import UserBook, UserActivity
+from application.models.books import *

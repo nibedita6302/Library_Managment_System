@@ -1,5 +1,5 @@
 from ..database import db 
-from .books import UserBook
+from .user_book_activity import UserBook
 from utils.credentials import check_password
 from flask_security import UserMixin, RoleMixin
 from sqlalchemy import Integer, String, Boolean, DateTime, Float, ForeignKey,  Column

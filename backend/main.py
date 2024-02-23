@@ -77,7 +77,8 @@ print("Create app complete")
 
 ## import models in main
 from application.models.users import Users, Role, RoleUsers
-from application.models.books import Books, Sections, UserBook, Author, AuthorBook
+from application.models.books import Books, Sections, Author, AuthorBook
+from application.models.user_book_activity import UserBook, UserActivity
 from application.models.reviews import Reviews
 ## Import controllers in main
 from application.controller import login

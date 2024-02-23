@@ -16,6 +16,8 @@ author_field = {
 class AuthorManagement(Resource):
     def get(self, author_id):       ## Get Author details 
         author = Author.query.get(author_id)
+        if not author:
+            return {'message': {'error': 'Author Not Found'}}, 404
         return marshal(author, author_field), 200
 
     @auth_required('token')
@@ -23,10 +25,12 @@ class AuthorManagement(Resource):
     def post(self):                 ## Create new Author 
         jsonData = request.get_json()
         if ('a_name' in jsonData) and ('about_author' in jsonData):
-            author = Author(**jsonData)
-            db.session.add(author)
-            db.session.commit()
-            return {'message': {'success': 'New Author Created!'}}, 200
+            if not Author.query.filter_by(a_name=jsonData['a_name']).first():
+                author = Author(**jsonData)
+                db.session.add(author)
+                db.session.commit()
+                return {'message': {'success': 'New Author Created!'}}, 200
+            return {'message':{'error': 'Author Name must be Unique'}}, 400
         return {'message': {'error': 'All fields are compulsory.'}}, 400
 
     @auth_required('token')
@@ -42,7 +46,7 @@ class AuthorManagement(Resource):
             return {'message': {'error': 'Atleast one field needs to be filled!'}}, 400
         
         db.session.commit()
-        return {'message': {'success': 'New Author Created!'}}, 200
+        return {'message': {'success': 'Author Updated!'}}, 200
 
     @auth_required('token')
     @roles_required('librarian')

@@ -44,7 +44,7 @@ class Sections(db.Model):
 class Author(db.Model):
     __tablename__='authors'
     a_id = Column(Integer(), autoincrement=True, primary_key=True)
-    a_name = Column(String(), nullable=False)   
+    a_name = Column(String(), unique=True, nullable=False)   
     about_author = Column(String(), nullable=False)   
     #relationships
     biblography = db.relationship('Books', secondary=AuthorBook, backref='writer')

@@ -4,29 +4,11 @@ from sqlalchemy import Integer, String, Boolean, DateTime, Float, ForeignKey,  C
 
 ## many-to-many relationship table between Authors and Books
 AuthorBook = db.Table('author_book',
-    Column('b_id', Integer(), ForeignKey('books.b_id'), primary_key=True), # books
-    Column('a_id',Integer(), ForeignKey('authors.a_id'), primary_key=True),  # authors
+    Column('b_id', Integer(), ForeignKey('books.b_id', ondelete="CASCADE"), primary_key=True), # books
+    Column('a_id',Integer(), ForeignKey('authors.a_id', ondelete="CASCADE"), primary_key=True),  # authors
     Column('read_count',Integer(), nullable=False, default=0),
     Column('bought_count', Integer(), nullable=False, default=0)
 )
-    
-## many-to-many relationship table between Users and Books
-class UserBook(db.Model): 
-    __tablename__='user_book'
-    issue_id = Column(Integer(), autoincrement=True, primary_key=True)
-    user_id = Column(Integer(), ForeignKey('users.id'), nullable=False)  # users
-    b_id = Column(Integer(), ForeignKey('books.b_id'), nullable=False) # books
-    issue_date = Column(DateTime(), default=datetime.now(), nullable=False)
-    due_date = Column(DateTime(), default=datetime.now()+timedelta(days=7), nullable=False)
-    return_date = Column(DateTime())
-    read_count = Column(Integer(), nullable=False, default=0)
-    bought_price = Column(Integer(), nullable=False, default=0)
-    #relationships 
-    issuer = db.relationship('Users', back_populates='user_book', cascade='all, delete')
-    books = db.relationship('Books', back_populates='user_book', cascade='all, delete')
-
-    def __repr__(self) -> str:
-        return f"User-Book - {self.b_id}:{self.users_id}"
 
 class Books(db.Model):
     __tablename__='books' 
@@ -42,16 +24,12 @@ class Books(db.Model):
     content_link = Column(String(), nullable=False)
     total_issue = Column(Integer(), nullable=False, default=0)
     total_bought = Column(Integer(), nullable=False, default=0)
-    is_deleted = Column(Boolean(), nullable=False, default=False)
     #relationship
     reviews = db.relationship('Reviews', cascade='all, delete-orphan')
     user_book = db.relationship('UserBook', back_populates='books', cascade='all, delete')
 
     def __repr__(self) -> str:
-        deleted = ''
-        if self.is_deleted == True:
-            deleted = 'deleted'
-        return f"Books - {self.b_id}:{self.b_name} {deleted}"
+        return f"Books - {self.b_id}:{self.b_name}"
     
 class Sections(db.Model):
     __tablename__='sections'
@@ -59,16 +37,9 @@ class Sections(db.Model):
     s_name = Column(String(), unique=True, nullable=False)
     s_image = Column(String(), unique=True, nullable=False)
     book_count = Column(Integer(), nullable=False, default=0)
-    # Relationship between Books and Other tables may get disrupted if deleted.
-    # Therefore, cannot actually remove sections or books instances.
-    # The above is yet to be confirmed!!
-    is_deleted = Column(Boolean(), nullable=False, default=False)  
 
     def __repr__(self) -> str:
-        deleted = ''
-        if self.is_deleted == True:
-            deleted = 'deleted'
-        return f"Sections - {self.s_id}:{self.s_name} {deleted}"
+        return f"Sections - {self.s_id}:{self.s_name}"
 
 class Author(db.Model):
     __tablename__='authors'
@@ -76,8 +47,7 @@ class Author(db.Model):
     a_name = Column(String(), nullable=False)   
     about_author = Column(String(), nullable=False)   
     #relationships
-    biblography = db.relationship('Books', secondary=AuthorBook, backref='writer',
-                                   cascade='all, delete')
+    biblography = db.relationship('Books', secondary=AuthorBook, backref='writer')
 
     def __repr__(self) -> str:
         return f"Authors - {self.a_id}:{self.a_name}"

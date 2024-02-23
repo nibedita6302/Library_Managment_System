@@ -24,16 +24,12 @@ class Books(db.Model):
     content_link = Column(String(), nullable=False)
     total_issue = Column(Integer(), nullable=False, default=0)
     total_bought = Column(Integer(), nullable=False, default=0)
-    is_deleted = Column(Boolean(), nullable=False, default=False)
     #relationship
     reviews = db.relationship('Reviews', cascade='all, delete-orphan')
     user_book = db.relationship('UserBook', back_populates='books', cascade='all, delete')
 
     def __repr__(self) -> str:
-        deleted = ''
-        if self.is_deleted == True:
-            deleted = 'deleted'
-        return f"Books - {self.b_id}:{self.b_name} {deleted}"
+        return f"Books - {self.b_id}:{self.b_name}"
     
 class Sections(db.Model):
     __tablename__='sections'
@@ -41,16 +37,9 @@ class Sections(db.Model):
     s_name = Column(String(), unique=True, nullable=False)
     s_image = Column(String(), unique=True, nullable=False)
     book_count = Column(Integer(), nullable=False, default=0)
-    # Relationship between Books and Other tables may get disrupted if deleted.
-    # Therefore, cannot actually remove sections or books instances.
-    # The above is yet to be confirmed!!
-    is_deleted = Column(Boolean(), nullable=False, default=False)  
 
     def __repr__(self) -> str:
-        deleted = ''
-        if self.is_deleted == True:
-            deleted = 'deleted'
-        return f"Sections - {self.s_id}:{self.s_name} {deleted}"
+        return f"Sections - {self.s_id}:{self.s_name}"
 
 class Author(db.Model):
     __tablename__='authors'

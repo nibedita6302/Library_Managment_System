@@ -54,6 +54,9 @@ class AuthorManagement(Resource):
         ## Deletion of Author deletes books??
         if confirm:
             author = Author.query.get(author_id)
+            if len(author.biblography)==0:
+                return {'message': {'error': 'Cannot delete Author because it still has associated books.\
+                                    Please delete all books written by this Author.'}}, 409   
             db.session.delete(author)
             db.session.commit()
             return {'message': {'success': f'Author with ID {author.a_id} deletion confirmed!'}}, 200

@@ -2,6 +2,8 @@ from .users import UserRegister, UserProfile
 from .sections import ManageSections, SectionAnalytics, DisplaySections
 from .authors import AuthorManagement
 from .books import ManageBook, Books_in_Section, Download_Book
+from .reviews import UserReview
+from .search import SearchBooks
 
 def config_all_resource(api):
     user_api(api)
@@ -29,6 +31,11 @@ def book_api(api):
     api.add_resource(Books_in_Section, '/section/<int:section_id>/books')
     api.add_resource(Download_Book, '/book/buy/<int:book_id>')
 
+def review_api(api):
+    api.add_resource(UserReview, '/book/<int:book_id>/review')
+
+def search_api(api):
+    api.add_resource(SearchBooks, '/search')
 
 from .test import Test
 def test_api(api):

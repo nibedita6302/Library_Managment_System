@@ -1,11 +1,13 @@
 from .users import UserRegister, UserProfile
 from .sections import ManageSections, SectionAnalytics, DisplaySections
 from .authors import AuthorManagement
+from .books import ManageBook, Books_in_Section
 
 def config_all_resource(api):
     user_api(api)
     section_api(api)
     author_api(api)
+    book_api(api)
 
 def user_api(api):
     api.add_resource(UserRegister, "/user-registration")
@@ -20,6 +22,10 @@ def section_api(api):
 def author_api(api):
     api.add_resource(AuthorManagement, '/author/<int:author_id>', '/author/create', 
                      '/author/update/<int:author_id>', '/author/delete/<int:author_id>/<int:confirm>')
+
+def book_api(api):
+    api.add_resource(ManageBook, '/book/<int:book_id>', '/book/create', '/book/update/<int:book_id>',
+                     '/book/delete/<int:book_id>/<int:confirm>')
 
 
 from .test import Test

@@ -43,7 +43,7 @@ class ManageSections(Resource):
                     lastest_id = lastest_id.s_id+1
                 else:       ## If first Section - ID=1
                     lastest_id = 1
-                img_path = 'image_'+str(lastest_id)+extension       ## Save image name with ID of new section
+                img_path = 'section_image_'+str(lastest_id)+extension       ## Save image name with ID of new section
                 image.save(os.path.join(app.config['UPLOAD_FOLDER']+'upload/',img_path))
                 section.s_image = img_path
             else:

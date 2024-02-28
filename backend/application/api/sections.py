@@ -43,7 +43,7 @@ class ManageSections(Resource):
                     lastest_id = lastest_id.s_id+1
                 else:       ## If first Section - ID=1
                     lastest_id = 1
-                img_path = 'image_'+str(lastest_id)+extension       ## Save image name with ID of new section
+                img_path = 'section_image_'+str(lastest_id)+extension       ## Save image name with ID of new section
                 image.save(os.path.join(app.config['UPLOAD_FOLDER']+'upload/',img_path))
                 section.s_image = img_path
             else:
@@ -85,8 +85,9 @@ class ManageSections(Resource):
             books = Books.query.filter_by(s_id=section_id).all()
             if len(books)>0:
                 ## 409 HTTP Code for Conflict with current state of target resource
-                return {'message': {'error': 'Cannot delete Section because it still has associated books.\
-                                    Please delete all books first.'}}, 409   
+                return {'message': {
+                            'error': 'Cannot delete Section because it still has associated books. Please delete all books first.'
+                        }}, 409   
             db.session.delete(section)   
             db.session.commit()
             return {'message': {'success': 'Deleted Section'}}, 200

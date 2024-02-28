@@ -21,7 +21,8 @@ class Books(db.Model):
     date_published = Column(DateTime(), nullable=False, default=datetime.now())
     publisher = Column(String(), nullable=False)
     summary = Column(String(), nullable=False)
-    content_link = Column(String(), nullable=False)
+    content_link_view = Column(String(), nullable=False)
+    content_link_download = Column(String(), nullable=False)
     total_issue = Column(Integer(), nullable=False, default=0)
     total_bought = Column(Integer(), nullable=False, default=0)
     #relationship
@@ -44,7 +45,7 @@ class Sections(db.Model):
 class Author(db.Model):
     __tablename__='authors'
     a_id = Column(Integer(), autoincrement=True, primary_key=True)
-    a_name = Column(String(), nullable=False)   
+    a_name = Column(String(), unique=True, nullable=False)   
     about_author = Column(String(), nullable=False)   
     #relationships
     biblography = db.relationship('Books', secondary=AuthorBook, backref='writer')

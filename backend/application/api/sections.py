@@ -85,8 +85,9 @@ class ManageSections(Resource):
             books = Books.query.filter_by(s_id=section_id).all()
             if len(books)>0:
                 ## 409 HTTP Code for Conflict with current state of target resource
-                return {'message': {'error': 'Cannot delete Section because it still has associated books.\
-                                    Please delete all books first.'}}, 409   
+                return {'message': {
+                            'error': 'Cannot delete Section because it still has associated books. Please delete all books first.'
+                        }}, 409   
             db.session.delete(section)   
             db.session.commit()
             return {'message': {'success': 'Deleted Section'}}, 200

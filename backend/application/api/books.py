@@ -44,7 +44,7 @@ class ManageBook(Resource):
         return {
             "book_details": marshal(book, book_field),
             "reviews": marshal(book_reviews, review_field)
-        }
+        }, 200
 
     @auth_required('token')
     @roles_required('librarian')
@@ -133,8 +133,17 @@ class ManageBook(Resource):
 class Books_in_Section(Resource):
     ## Display all books in section
     def get(self, section_id):
-        pass
+        books = Books.query.filter_by(s_id=section_id).all()
+        return marshal(books, book_field), 200
 
 class Download_Book(Resource):
+    @auth_required('token')
+    @roles_required('user')
     def get(self, book_id):
-        pass
+        book = Books.query.get(book_id)
+        if not UserBook.query.filter_by(user_id=current_user.id, b_id=book_id).first():
+            return {'message': {'error': 'Please Issue book to be able to download'}}, 403   
+        book.total_bought+=1
+        db.session.commit()
+        return {'content_link_download':book.content_link_download}, 200 
+    

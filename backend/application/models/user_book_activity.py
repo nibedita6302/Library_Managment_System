@@ -1,7 +1,21 @@
 from datetime import datetime, timedelta
 from ..database import db 
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy import Integer, String, Boolean, DateTime, Float, ForeignKey,  Column
+from sqlalchemy import Integer, String, Boolean, DateTime, Float, ForeignKey,  Column, CheckConstraint
+
+## Stores all Issue Requests
+## Removes row once issue is accepted or rejected
+class IssueRequest(db.Model):
+    __tablename__='issue_request'
+    req_id = Column(Integer(), autoincrement=True, primary_key=True)
+    user_id = Column(Integer(), ForeignKey('users.id'), nullable=False)  # users
+    b_id = Column(Integer(), ForeignKey('books.b_id'), nullable=False) # books
+    status = Column(Integer(), default=2)
+
+    __table_args__ = (
+        ## 0 -> Rejected, 1 -> Accepted, 2 -> Pending
+        CheckConstraint('status IN (0,1,2)', name='issue_status'),
+    )
 
 ## many-to-many relationship table between Users and Books
 class UserBook(db.Model): 
@@ -20,7 +34,9 @@ class UserBook(db.Model):
 
     def __repr__(self) -> str:
         return f"User-Book - {self.b_id}:{self.users_id}" 
-    
+
+## Book info that user issue
+## One-to-Many relationship with Users
 class UserActivity(db.Model):
     __tablename__='user_activity'
     actv_id = Column(Integer(), autoincrement=True, primary_key=True)

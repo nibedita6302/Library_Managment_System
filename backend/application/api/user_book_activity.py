@@ -8,3 +8,31 @@ from flask_security import auth_required, roles_required
 
 from application.models.user_book_activity import UserBook, UserActivity
 from application.models.books import *
+
+class IssueBook(Resource):
+    @auth_required('token')
+    @roles_required('user')
+    def post(self, book_id):        ## Request for book issue 
+        pass
+
+    @auth_required('token')
+    @roles_required('user')
+    def put(self, book_id):         ## Return book 
+        pass
+
+    @auth_required('token')
+    @roles_required('user')
+    def get(self, book_id):         ## Read Book Only
+        pass
+
+
+class UserStats(Resource):
+    @auth_required('token')
+    @roles_required('user')
+    def get(self):
+        ## Section Wise Distribution
+
+        ## Favourite Author
+
+        ## Ranking in different book reads
+        pass

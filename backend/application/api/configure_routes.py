@@ -10,6 +10,7 @@ def config_all_resource(api):
     section_api(api)
     author_api(api)
     book_api(api)
+    search_api(api)
 
 def user_api(api):
     api.add_resource(UserRegister, "/user-registration")

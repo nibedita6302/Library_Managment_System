@@ -87,7 +87,9 @@ class ManageSections(Resource):
                 ## 409 HTTP Code for Conflict with current state of target resource
                 return {'message': {
                             'error': 'Cannot delete Section because it still has associated books. Please delete all books first.'
-                        }}, 409   
+                        }}, 409 
+            ## Remove image 
+            os.remove(os.path.join(app.config['UPLOAD_FOLDER']+'upload/', section.s_image)) 
             db.session.delete(section)   
             db.session.commit()
             return {'message': {'success': 'Deleted Section'}}, 200

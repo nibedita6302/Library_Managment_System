@@ -40,10 +40,15 @@ class SearchBooks(Resource):
             book_list.extend(b2) 
             authors = Author.query.filter(Author.a_name.ilike(item)).all()      ## Search by Author 
             for a in authors:
+                print(a.biblography)
                 book_list.extend(a.biblography) 
             sections = Sections.query.filter(Sections.s_name.ilike(item)).all() ## Search by Section
             for s in sections:
                 b3 = Books.query.filter_by(s_id=s.s_id).all()
                 book_list.extend(b3) 
-        return marshal(book_list, book_field), 200
+        if book_list==[]:
+            return {"message":
+                    {"error":"No matching book found. Please check for any spelling mistakes!"}
+                }, 404
+        return marshal(list(set(book_list)), book_field), 200                   ## Return only distinct books
         

@@ -58,7 +58,10 @@ class ManageBook(Resource):
             ## PDF price > 0
             if int(formData['pdf_price'])<=0:
                 return {'message': {'error': 'Download Price should be greater than 0'}}, 400
-            book = Books(**formData)
+            
+            author = Author.query.get(formData['a_id'])     ## Add Author Book relationship
+            book = Books(**formData, writer=[author])
+
             if 'b_image' in request.files:
                 image = request.files['b_image']
                 if image.filename != "":
@@ -85,7 +88,7 @@ class ManageBook(Resource):
         book = Books.query.get(book_id)
 
         ## Check if atleast one field is updated
-        if len(formData)<=0 or 'b_image' not in request.files:
+        if len(formData)==0 and 'b_image' not in request.files:
             return {'message': {'error': 'Atleast one field is compulsory'}}, 400
         
         ## set updated values
@@ -95,6 +98,10 @@ class ManageBook(Resource):
                 if col.name in ['s_id', 'a_id']: 
                     if (not Sections.query.get(formData[col.name])):
                         return {'message': {'error': 'Section or Author Not Found'}}, 404   
+                    elif col.name == 'a_id':
+                        author = Author.query.get(formData['a_id'])     ## Add Author Book relationship
+                        print(author)
+                        book.writer = [author]
                 ## PDF price greater than 0
                 if int(formData['pdf_price'])<=0:
                     return {'message': {'error': 'Download Price should be greater than 0'}}, 400
@@ -123,6 +130,8 @@ class ManageBook(Resource):
                 return {'message': {
                             'error': 'Cannot delete Book because it still has associated issues. Please revoke all issues first.'
                         }}, 409   
+            ## Remove image 
+            os.remove(os.path.join(app.config['UPLOAD_FOLDER']+'upload/', book.b_image))             
             db.session.delete(book)   
             db.session.commit()
             return {'message': {'success': 'Deleted Book'}}, 200

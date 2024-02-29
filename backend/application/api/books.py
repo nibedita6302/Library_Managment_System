@@ -103,10 +103,10 @@ class ManageBook(Resource):
                         print(author)
                         book.writer = [author]
                 ## PDF price greater than 0
-                if int(formData['pdf_price'])<=0:
+                if col.name=='pdf_price' and int(formData[col.name])<=0:
                     return {'message': {'error': 'Download Price should be greater than 0'}}, 400
                 if col.name == 'date_published':
-                    book.date_published = datetime.strptime(formData['date_published'], "%d/%m/%Y")
+                    formData['date_published'] = datetime.strptime(formData['date_published'], "%d/%m/%Y")
                 setattr(book,col.name,formData[col.name])
 
         if 'b_image' in request.files:

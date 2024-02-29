@@ -101,8 +101,3 @@ class DisplaySections(Resource):
         section = Sections.query.all()
         return marshal(section, section_field), 200
 
-class SectionAnalytics(Resource):
-    @auth_required('token')
-    @roles_required('librarian')
-    def get(self):      ## Section wise distribution 
-        pass 

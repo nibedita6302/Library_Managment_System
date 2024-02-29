@@ -7,10 +7,10 @@ from sqlalchemy import Integer, String, Boolean, DateTime, Float, ForeignKey,  C
 ## Removes row once issue is accepted or rejected
 class IssueRequest(db.Model):
     __tablename__='issue_request'
-    req_id = Column(Integer(), autoincrement=True, primary_key=True)
-    user_id = Column(Integer(), ForeignKey('users.id'), nullable=False)  # users
-    b_id = Column(Integer(), ForeignKey('books.b_id'), nullable=False) # books
-    status = Column(Integer(), default=2)
+    # req_id = Column(Integer(), autoincrement=True, primary_key=True)
+    user_id = Column(Integer(), ForeignKey('users.id'), primary_key=True)  # users
+    b_id = Column(Integer(), ForeignKey('books.b_id'), primary_key=True) # books
+    status = Column(Integer(), nullable=False, default=2)
 
     __table_args__ = (
         ## 0 -> Rejected, 1 -> Accepted, 2 -> Pending
@@ -18,6 +18,7 @@ class IssueRequest(db.Model):
     )
 
 ## many-to-many relationship table between Users and Books
+## Same book can be issued by the same user multiple times (after being returned)
 class UserBook(db.Model): 
     __tablename__='user_book'
     issue_id = Column(Integer(), autoincrement=True, primary_key=True)
@@ -26,7 +27,7 @@ class UserBook(db.Model):
     issue_date = Column(DateTime(), default=datetime.now(), nullable=False)
     due_date = Column(DateTime(), default=datetime.now()+timedelta(days=7), nullable=False)
     return_date = Column(DateTime())
-    read_count = Column(Integer(), nullable=False, default=0)
+    # read_count = Column(Integer(), nullable=False, default=0)
     bought_price = Column(Integer(), nullable=False, default=0)
     #relationships 
     issuer = db.relationship('Users', back_populates='user_book', cascade='all, delete')

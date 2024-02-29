@@ -14,14 +14,15 @@ class UserReview(Resource):
     @roles_required('user')
     def post(self, book_id):
         book = Books.query.get(book_id)
-        if not UserBook.query.filter_by(user_id = current_user.id):
+        if not UserBook.query.filter_by(user_id = current_user.id, b_id=book_id, return_date=None).first():
             return {'message': {'error': 'Please Issue book to write review'}}, 403   
         jsonData = request.get_json()
         if len(jsonData)!=2:
             return {'message': {'error': 'All fields are compulsory.'}}, 400
         if Reviews.query.filter_by(user_id=current_user.id):
             return {'message': {'error': 'Your review already exists'}}, 400
-        review = Reviews(**jsonData, user_id=current_user.id)
+        review = Reviews(**jsonData, user_id=current_user.id, b_id=book_id)
+        # book.reviews = [review]     ## Add to relationship
         db.session.add(review)
         db.session.commit()
         return {'message': {'success': 'Added review successfully'}}, 200

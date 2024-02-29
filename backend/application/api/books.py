@@ -138,21 +138,35 @@ class ManageBook(Resource):
         else:
             return {'message': {'success': 'Canceled Delete'}}, 200 
 
-
 class Books_in_Section(Resource):
     ## Display all books in section
     def get(self, section_id):
         books = Books.query.filter_by(s_id=section_id).all()
         return marshal(books, book_field), 200
 
+## API for downloading books
 class Download_Book(Resource):
     @auth_required('token')
     @roles_required('user')
-    def get(self, book_id):
-        book = Books.query.get(book_id)
-        if not UserBook.query.filter_by(user_id=current_user.id, b_id=book_id).first():
+    def get(self, issue_id):
+        ir1 = UserBook.query.get(issue_id)
+        if not ir1:
             return {'message': {'error': 'Please Issue book to be able to download'}}, 403   
+        book = Books.query.get(ir1.b_id)
         book.total_bought+=1
+        ir1.bought_price = book.pdf_price
         db.session.commit()
         return {'content_link_download':book.content_link_download}, 200 
     
+## API for only reading books
+class Read_Book(Resource):
+    @auth_required('token')
+    @roles_required('user')
+    def get(self, issue_id):         ## Read Book Only
+        ir1 = UserBook.query.get(issue_id)
+        if (ir1 is None) or (ir1.user_id!=current_user.id):
+            return {'message':{'error':'This book is not issued by you, yet.'}}, 400
+        if ir1.return_date is not None:
+            return {'message':{'error':'The book has already been returned!'}}, 400
+        book = Books.query.get(ir1.b_id)
+        return {'content_link_view': book.content_link_view}, 200

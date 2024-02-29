@@ -11,7 +11,21 @@ from application.models.user_book_activity import UserBook, UserActivity, IssueR
 from application.models.books import Books
 from application.models.users import Users
 
+issue_req_field = {
+    'user_id': fields.Integer,
+    'b_id': fields.Integer,
+    'status': fields.Integer,
+}
+
 class IssueBook(Resource):
+    @auth_required('token')
+    def get(self):                  ## Get all book issues
+        if 'librarian' in current_user.role:
+            ir1 = IssueRequest.query.all()      ## Return all requests to Librarian
+        else:
+            ir1 = IssueRequest.query.filter_by(user_id=current_user.id).all()   ## Return only user's requests
+        return marshal(ir1, issue_req_field), 200
+
     @auth_required('token')
     @roles_required('user')
     def post(self, book_id):        ## Request for book issue 
@@ -19,45 +33,34 @@ class IssueBook(Resource):
             return {'message':{'error':'Issue Request Declines. You can issue upto 5 book at a time'}}, 400
         if UserBook.query.filter_by(user_id=current_user.id, b_id=book_id):
             return {'message':{'error':'You have already issued this book. Visit MyBooks to read.'}}, 400
-        ib = IssueRequest.query.filter_by(user_id=current_user.id, b_id=book_id).first()
-        if ib:
-            if ib.status==2:
+        ir = IssueRequest.query.filter_by(user_id=current_user.id, b_id=book_id).first()
+        if ir:
+            if ir.status==2:
                 return {'message':{
                     'success':'Please wait while your issue is under process',
                     'status': 'PENDING' 
                 }}, 400
-            if ib.status==0:
+            if ir.status==0:
                 return {'message':{
                     'success':'Your issue has been declined, please try again after few days.',
                     'status': 'REJECTED' 
                 }}, 400
-        ib1 = IssueRequest(user_id=current_user.id, b_id = book_id)
-        db.session.add(ib1)
+        ir1 = IssueRequest(user_id=current_user.id, b_id = book_id)
+        db.session.add(ir1)
         db.session.commit()
         return {'message':{'success':'Issue Request sent to Librarian. Please wait for confirmation'}}, 200
 
     @auth_required('token')
     @roles_required('user')
     def put(self, issue_id):         ## Return book 
-        ib1 = UserBook.query.get(issue_id)
-        if (ib1 is None) or (ib1.user_id!=current_user.id):
+        ir1 = UserBook.query.get(issue_id)
+        if (ir1 is None) or (ir1.user_id!=current_user.id):
             return {'message':{'error':'This book is not issued by you, yet.'}}, 400
-        if ib1.return_date is not None:
+        if ir1.return_date is not None:
             return {'message':{'error':'The book has already been returned!'}}, 400
-        ib1.return_date = datetime.strftime(datetime.now(), '%d/%m/%Y')
+        ir1.return_date = datetime.strftime(datetime.now(), '%d/%m/%Y')
         db.session.commit()
         return {'message':{'success':'Book returned successfully'}}, 200
-
-    @auth_required('token')
-    @roles_required('user')
-    def get(self, issue_id):         ## Read Book Only
-        ib1 = UserBook.query.get(issue_id)
-        if (ib1 is None) or (ib1.user_id!=current_user.id):
-            return {'message':{'error':'This book is not issued by you, yet.'}}, 400
-        if ib1.return_date is not None:
-            return {'message':{'error':'The book has already been returned!'}}, 400
-        book = Books.query.get(ib1.b_id)
-        return {'content_link_view': book.content_link_view}, 200
 
 section_count_field = {
     'section_name': fields.String,

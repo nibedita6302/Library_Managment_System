@@ -1,9 +1,11 @@
 from .users import UserRegister, UserProfile
 from .sections import ManageSections, SectionAnalytics, DisplaySections
 from .authors import AuthorManagement
-from .books import ManageBook, Books_in_Section, Download_Book
+from .books import ManageBook, Books_in_Section, Download_Book, Read_Book
 from .reviews import UserReview
 from .search import SearchBooks
+from .user_book_activity import IssueRequest, UserStats
+from .librarian import LibrarianAnalytics
 
 def config_all_resource(api):
     user_api(api)
@@ -31,12 +33,21 @@ def book_api(api):
                      '/book/delete/<int:book_id>/<int:confirm>')
     api.add_resource(Books_in_Section, '/section/<int:section_id>/books')
     api.add_resource(Download_Book, '/book/buy/<int:book_id>')
+    api.add_resource(Read_Book, '/book/read/<int:issue_id>')
 
 def review_api(api):
     api.add_resource(UserReview, '/book/<int:book_id>/review')
 
 def search_api(api):
     api.add_resource(SearchBooks, '/search')
+
+def user_activity_api(api):
+    api.add_resource(IssueRequest, '/issue-requests', '/issue-requests/new/<int:book_id>',
+                      '/issue-requests/return/<int:issue_id>')
+    api.add_resource(UserStats, '/user-stats')
+
+def librarian_stats_api(api):
+    api.add_resource(LibrarianAnalytics, '/librarian-stats')
 
 from .test import Test
 def test_api(api):

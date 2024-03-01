@@ -52,3 +52,8 @@ class LibrarianAnalytics(Resource):
             'active_users': marshal(active_users, active_users_field)
         }, 200
         
+class Issue_Request_Approval(Resource):
+    def put(self, issue_id):        ## Accept / Reject request
+        jsonData = request.get_json()
+        if 'approval' in jsonData:
+            pass

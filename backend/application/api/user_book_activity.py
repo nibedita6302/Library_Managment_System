@@ -58,12 +58,17 @@ class Issue_Book_Request(Resource):
     @auth_required('token')
     @roles_required('user')
     def put(self, issue_id):         ## Return book 
-        ir1 = UserBook.query.get(issue_id)
-        if (ir1 is None) or (ir1.user_id!=current_user.id):     ## Issue does not exists for current user
+        user_book = UserBook.query.get(issue_id)
+        book = Books.query.get(user_book.b_id)
+        user_actv = UserActivity.query.filter_by(user_id=current_user.id, book_name=book.b_name,
+                                                  return_date=None).first()
+        if (user_book is None) or (user_book.user_id!=current_user.id):     ## Issue does not exists for current user
             return {'message':{'error':'This book is not issued by you, yet.'}}, 400
-        if ir1.return_date is not None:                         ## Already returned book
+        if user_book.return_date is not None:                         ## Already returned book
             return {'message':{'error':'The book has already been returned!'}}, 400
-        ir1.return_date = datetime.strftime(datetime.now(), '%d/%m/%Y')
+        ## Set return date in UserBooks and UserActivity
+        user_book.return_date = datetime.now()
+        user_actv.return_date = datetime.now()
         db.session.commit()
         return {'message':{'success':'Book returned successfully'}}, 200
 
@@ -87,17 +92,18 @@ class UserStats(Resource):
     @roles_required('user')
     def get(self):
         ## Section Wise Distribution
-        section_count = db.session.query(UserActivity.section_name, db.func.count('*').label('count'))\
+        section_count = db.session.query(UserActivity.section_name, db.func.count().label('count'))\
                         .filter(UserActivity.user_id==current_user.id)\
                         .group_by(UserActivity.section_name).all()
         
         ## Favourite Author
-        fav_author = db.session.query(UserActivity.author_name, db.func.count('*').label('count'))\
+        fav_author = db.session.query(UserActivity.author_name, db.func.count().label('count'))\
                         .filter(UserActivity.user_id==current_user.id)\
                         .group_by(UserActivity.author_name).all()
         
         ## Ranking in different book reads (top 3 & current user rank)
-        ranking = db.session.query(Users.name, db.func.count('*').label('count'))\
+        ranking = db.session.query(Users.name, db.func.count().label('count'))\
+                    .join(UserActivity, Users.id==UserActivity.user_id)\
                     .group_by(UserActivity.user_id).all()
         
         return {

@@ -8,7 +8,7 @@ from flask_login import current_user
 from flask_security import auth_required, roles_required
 
 from application.models.books import Books, Sections, Author
-from application.models.user_book_activity import UserBook
+from application.models.user_book_activity import UserBook, UserActivity
 
 book_field = {
     "b_id": fields.Integer,
@@ -124,8 +124,11 @@ class ManageBook(Resource):
     def delete(self, book_id, confirm):  ## Delete book if no issues
         if confirm:
             book = Books.query.get(book_id)
-            issuers = book.user_book
-            if len(issuers)>0:
+            if not book:
+                return {'message': {'error': 'Book does not exists'}}, 404
+            active_issuers = UserBook.query.filter(UserBook.b_id==book_id, 
+                                                   UserBook.return_date == None).all()
+            if len(active_issuers)>0:
                 ## 409 HTTP Code for Conflict with current state of target resource
                 return {'message': {
                             'error': 'Cannot delete Book because it still has associated issues. Please revoke all issues first.'
@@ -149,13 +152,17 @@ class Download_Book(Resource):
     @auth_required('token')
     @roles_required('user')
     def get(self, issue_id):
-        ir1 = UserBook.query.get(issue_id)
-        if not ir1:
+        user_book = UserBook.query.get(issue_id)
+        if not user_book:
             return {'message': {'error': 'Please Issue book to be able to download'}}, 403   
-        book = Books.query.get(ir1.b_id)
-        book.total_bought+=1
-        ir1.bought_price = book.pdf_price
+        book = Books.query.get(user_book.b_id)
+        user_actv = UserActivity.query.filter_by(user_id=current_user.id, b_id=book.b_id).first()
+        book.total_bought+=1                        ## Increment Total book bought in Books
+        user_book.bought_price = book.pdf_price     ## Add bought price in UserBooks
+        user_actv.bought_price = book.pdf_price     ## Add bought price in UserActivity
         db.session.commit()
+
+        ## Asynchronous Download from link
         return {'content_link_download':book.content_link_download}, 200 
     
 ## API for only reading books
@@ -163,10 +170,10 @@ class Read_Book(Resource):
     @auth_required('token')
     @roles_required('user')
     def get(self, issue_id):         ## Read Book Only
-        ir1 = UserBook.query.get(issue_id)
-        if (ir1 is None) or (ir1.user_id!=current_user.id):
+        user_book = UserBook.query.get(issue_id)
+        if (user_book is None) or (user_book.user_id!=current_user.id):
             return {'message':{'error':'This book is not issued by you, yet.'}}, 400
-        if ir1.return_date is not None:
+        if user_book.return_date is not None:
             return {'message':{'error':'The book has already been returned!'}}, 400
-        book = Books.query.get(ir1.b_id)
+        book = Books.query.get(user_book.b_id)
         return {'content_link_view': book.content_link_view}, 200

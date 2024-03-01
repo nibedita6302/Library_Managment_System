@@ -82,6 +82,8 @@ class ManageSections(Resource):
     def delete(self, section_id, confirm):       ## Delete Section 
         if confirm:
             section = Sections.query.get(section_id)
+            if not section:
+                return {'message': {'error': 'Section does not exists'}}, 404
             books = Books.query.filter_by(s_id=section_id).all()
             if len(books)>0:
                 ## 409 HTTP Code for Conflict with current state of target resource

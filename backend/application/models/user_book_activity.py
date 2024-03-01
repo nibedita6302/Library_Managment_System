@@ -8,8 +8,8 @@ from sqlalchemy import Integer, String, Boolean, DateTime, Float, ForeignKey,  C
 class IssueRequest(db.Model):
     __tablename__='issue_request'
     # req_id = Column(Integer(), autoincrement=True, primary_key=True)
-    user_id = Column(Integer(), ForeignKey('users.id'), primary_key=True)  # users
-    b_id = Column(Integer(), ForeignKey('books.b_id'), primary_key=True) # books
+    user_id = Column(Integer(), ForeignKey('users.id', ondelete="CASCADE"), primary_key=True)   # users
+    b_id = Column(Integer(), ForeignKey('books.b_id', ondelete="CASCADE"), primary_key=True)    # books
     status = Column(Integer(), nullable=False, default=2)
 
     __table_args__ = (

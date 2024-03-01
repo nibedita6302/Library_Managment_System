@@ -1,10 +1,10 @@
 from .users import UserRegister, UserProfile
-from .sections import ManageSections, SectionAnalytics, DisplaySections
+from .sections import ManageSections, DisplaySections
 from .authors import AuthorManagement
 from .books import ManageBook, Books_in_Section, Download_Book, Read_Book
 from .reviews import UserReview
 from .search import SearchBooks
-from .user_book_activity import IssueRequest, UserStats
+from .user_book_activity import Issue_Book_Request, UserStats
 from .librarian import LibrarianAnalytics
 
 def config_all_resource(api):
@@ -13,6 +13,9 @@ def config_all_resource(api):
     author_api(api)
     book_api(api)
     search_api(api)
+    review_api(api)
+    user_activity_api(api)
+    librarian_stats_api(api)
 
 def user_api(api):
     api.add_resource(UserRegister, "/user-registration")
@@ -32,7 +35,7 @@ def book_api(api):
     api.add_resource(ManageBook, '/book/<int:book_id>', '/book/create', '/book/update/<int:book_id>',
                      '/book/delete/<int:book_id>/<int:confirm>')
     api.add_resource(Books_in_Section, '/section/<int:section_id>/books')
-    api.add_resource(Download_Book, '/book/buy/<int:book_id>')
+    api.add_resource(Download_Book, '/book/buy/<int:issue_id>')
     api.add_resource(Read_Book, '/book/read/<int:issue_id>')
 
 def review_api(api):
@@ -42,7 +45,7 @@ def search_api(api):
     api.add_resource(SearchBooks, '/search')
 
 def user_activity_api(api):
-    api.add_resource(IssueRequest, '/issue-requests', '/issue-requests/new/<int:book_id>',
+    api.add_resource(Issue_Book_Request, '/issue-requests', '/issue-requests/new/<int:book_id>',
                       '/issue-requests/return/<int:issue_id>')
     api.add_resource(UserStats, '/user-stats')
 

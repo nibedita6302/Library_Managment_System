@@ -34,12 +34,12 @@ class UserBook(db.Model):
     revoked = Column(Integer(), default=0)
     bought_price = Column(Integer(), nullable=False, default=0)
     #relationships 
-    issuer = db.relationship('Users', back_populates='user_book', cascade='all, delete')
-    books = db.relationship('Books', back_populates='user_book', cascade='all, delete')
+    issuer = db.relationship('Users', back_populates='user_book')
+    books = db.relationship('Books', back_populates='user_book')
 
     __table_args__ = (
         ## 0 -> Rejected, 1 -> Accepted, 2 -> Pending
-        CheckConstraint('status IN (0,1)', name='book_revoked'),
+        CheckConstraint('revoked IN (0,1)', name='book_revoked'),
     )
 
     def __repr__(self) -> str:

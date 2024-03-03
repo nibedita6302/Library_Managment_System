@@ -9,7 +9,7 @@ from flask_security import auth_required, roles_required
 
 from application.models.user_book_activity import UserBook, UserActivity, IssueRequest
 from application.models.books import Books
-from application.models.users import Users
+from utils.analytics import *
 
 issue_req_field = {
     'user_id': fields.Integer,
@@ -91,20 +91,14 @@ class UserStats(Resource):
     @auth_required('token')
     @roles_required('user')
     def get(self):
-        ## Section Wise Distribution
-        section_count = db.session.query(UserActivity.section_name, db.func.count().label('count'))\
-                        .filter(UserActivity.user_id==current_user.id)\
-                        .group_by(UserActivity.section_name).all()
+        ## Section Wise Distribution - Book Reads
+        section_count = section_distribution_user(current_user.id)
         
         ## Favourite Author
-        fav_author = db.session.query(UserActivity.author_name, db.func.count().label('count'))\
-                        .filter(UserActivity.user_id==current_user.id)\
-                        .group_by(UserActivity.author_name).all()
+        fav_author = fav_author(current_user.id)
         
         ## Ranking in different book reads (top 3 & current user rank)
-        ranking = db.session.query(Users.name, db.func.count().label('count'))\
-                    .join(UserActivity, Users.id==UserActivity.user_id)\
-                    .group_by(UserActivity.user_id).all()
+        ranking = user_ranking()
         
         return {
             'section_distribution': marshal(section_count, section_count_field),

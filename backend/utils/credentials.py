@@ -12,7 +12,7 @@ def validate_email(email):
     if email.count('@')==1:
         front, back = email.split('@')
         front_pattern = re.compile(r'^[a-zA-Z0-9]+(?:[._][a-zA-Z0-9]+)*$')
-        back_pattern = re.compile(r'^[a-zA-Z0-9]+[.][a-zA-Z]+$')
+        back_pattern = re.compile(r'^[a-zA-Z0-9]+(?:[.][a-zA-Z]+)*$')
         # Explaination
         # Alpha numeric (1 or more) followed by '.' or '_' which is immediately
         # followed by Alpha numeric characters (1 or more)
@@ -33,5 +33,5 @@ def validate_password(password):
 
 
 # Testing
-# print(validate_email('hello1.2@hello.com'))
-# print( validate_password('hello12@A') )
+print(validate_email('hello1.2.3@hello.gov.in'))
+print( validate_password('hello12@A') )

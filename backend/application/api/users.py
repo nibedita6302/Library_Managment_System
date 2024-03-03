@@ -2,7 +2,7 @@ from flask_restful import Resource, fields, marshal, reqparse
 from application.database import db
 from security import datastore
 from flask import request, jsonify
-# from flask_login import login_user, logout_user, current_user
+from flask_login import current_user
 from flask_security import auth_required, roles_required
 
 from application.models.users import Users, RoleUsers
@@ -39,8 +39,8 @@ class UserRegister(Resource):
 ## EXCEPT 'Librarian', for 'User' only!
 class UserProfile(Resource):
     @auth_required('token')
-    def get(self, user_id):     ## View user details
-        user = Users.query.get(user_id)
+    def get(self):     ## View user details
+        user = Users.query.get(current_user.id)
         if user:
             if user.roles[0].name == 'librarian':
                 return {'message': {'error': 'Confidential Information'}}, 401
@@ -65,8 +65,8 @@ class UserProfile(Resource):
 
     @auth_required('token')
     @roles_required('user')
-    def put(self, user_id):     ## Update existing user details
-        user = Users.query.get(user_id)
+    def put(self):     ## Update existing user details
+        user = Users.query.get(current_user.id)
         if user:
             if user.roles[0].name == 'librarian':
                 return {'message': {'error': 'Unauthorized Access'}}, 401
@@ -93,13 +93,13 @@ class UserProfile(Resource):
 
     @auth_required('token')
     @roles_required('user')
-    def delete(self, user_id, confirm):     ## Delete existing user 
-        user = Users.query.get(user_id)
+    def delete(self, confirm):     ## Delete existing user 
+        user = Users.query.get(current_user.id)
         if user:
             if user.roles[0].name == 'librarian':
                 return {'message': {'error': 'Unauthorized Delete Operation'}}, 401
             elif confirm:
-                user_role = db.session.query(RoleUsers).filter_by(user_id=user_id).first()
+                user_role = db.session.query(RoleUsers).filter_by(user_id=current_user.id).first()
                 print(user_role)
                 db.session.delete(user)
                 #db.session.delete(user_role)

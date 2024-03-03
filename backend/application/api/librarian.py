@@ -60,6 +60,8 @@ class Issue_Request_Approval(Resource):
         jsonData = request.get_json()
         ir1 = IssueRequest.query.filter_by(b_id=book_id, user_id=user_id).first()
         if ('approval' in jsonData) and (ir1 is not None):
+            if ir1.status!=2:
+                return {'message':{'error':'The issue had been already Accepted or Rejected'}}, 400
             if jsonData['approval']==1:
                 ir1.status = jsonData['approval']
 
@@ -100,17 +102,18 @@ class Issue_Request_Approval(Resource):
     def post(self, issue_id, confirm):           ## Revoke Request
         user_book = UserBook.query.get(issue_id)
         if confirm:
-            if user_book is not None:
+            if (user_book is not None) and (user_book.revoked!=1):
                 ## 1 day warning before Revoke
                 revoke_due = datetime.now() + timedelta(days=1)     
                 ## Due date set to revoke_due or due_date, which ever is Earliest
                 user_book.due_date = min(user_book.due_date, revoke_due)   
+                user_book.revoked = 1
                 db.session.commit()
 
                 ## Send email to user
 
                 return {'message':{'success':'Revoke successfull with 1 day warning'}}, 200
-            return {'message':{'error':'Book issue by User does not exists!'}}, 400
+            return {'message':{'error':'Book already Revoked or Issue does not exists'}}, 400
         return {'message':{'success':'Revoke canceled'}}, 200
 
         

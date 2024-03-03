@@ -17,6 +17,10 @@ class IssueRequest(db.Model):
         CheckConstraint('status IN (0,1,2)', name='issue_status'),
     )
 
+    def __repr__(self) -> str:
+        return f"Issue-Request - {self.b_id}:{self.users_id} - Status: {self.status}" 
+
+
 ## many-to-many relationship table between Users and Books
 ## Same book can be issued by the same user multiple times (after being returned)
 class UserBook(db.Model): 
@@ -27,14 +31,19 @@ class UserBook(db.Model):
     issue_date = Column(DateTime(), default=datetime.now(), nullable=False)
     due_date = Column(DateTime(), default=datetime.now()+timedelta(days=7), nullable=False)
     return_date = Column(DateTime())
-    # read_count = Column(Integer(), nullable=False, default=0)
+    revoked = Column(Integer(), default=0)
     bought_price = Column(Integer(), nullable=False, default=0)
     #relationships 
-    issuer = db.relationship('Users', back_populates='user_book', cascade='all, delete')
-    books = db.relationship('Books', back_populates='user_book', cascade='all, delete')
+    issuer = db.relationship('Users', back_populates='user_book')
+    books = db.relationship('Books', back_populates='user_book')
+
+    __table_args__ = (
+        ## 0 -> Rejected, 1 -> Accepted, 2 -> Pending
+        CheckConstraint('revoked IN (0,1)', name='book_revoked'),
+    )
 
     def __repr__(self) -> str:
-        return f"User-Book - {self.b_id}:{self.users_id}" 
+        return f"User-Book - {self.b_id}:{self.user_id}" 
 
 ## Book info that user issue
 ## One-to-Many relationship with Users

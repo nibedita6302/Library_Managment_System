@@ -100,6 +100,9 @@ class ManageSections(Resource):
 
 class DisplaySections(Resource):
     def get(self):      ## Display all Sections
-        section = Sections.query.all()
+        if current_user.roles[0] == 'librarian':
+            section = Sections.query.all()          ## Display empty Section for Librarian Only!!
+        else:
+            section = Sections.query.filter(Sections.book_count>0).all()
         return marshal(section, section_field), 200
 

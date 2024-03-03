@@ -20,7 +20,7 @@ book_field = {
     "date_published": fields.DateTime,
     "publisher": fields.String,
     "summary": fields.String,
-    "content_link_view": fields.String,
+    # "content_link_view": fields.String,
     "total_issue": fields.Integer,
     "total_bought": fields. Integer
 }
@@ -67,14 +67,19 @@ class ManageBook(Resource):
                 if image.filename != "":
                     extension = '.'+image.filename.split('.')[-1]
                     ## Get ID of last book added to database (+1 - new book ID)
-                    lastest_id = Books.query.order_by(Books.s_id.desc()).first()        
+                    lastest_id = Books.query.order_by(Books.b_id.desc()).first()     
+                    #print(lastest_id)   
                     if lastest_id:
                         lastest_id = lastest_id.b_id+1
                     else:       ## If first Book - ID=1
                         lastest_id = 1
-                    img_path = 'book_image_'+str(lastest_id)+extension       ## Save image name with ID of new book
+                    img_path = 'book_image_'+str(lastest_id)+extension  ## Save image name with ID of new book
+                    #print(img_path)
                     image.save(os.path.join(app.config['UPLOAD_FOLDER']+'upload/',img_path))
                     book.b_image = img_path 
+
+                    section = Sections.query.get(formData['s_id'])      
+                    section.book_count+=1           ## Increment book_count in Section
 
                     db.session.add(book)
                     db.session.commit()
@@ -134,7 +139,11 @@ class ManageBook(Resource):
                             'error': 'Cannot delete Book because it still has associated issues. Please revoke all issues first.'
                         }}, 409   
             ## Remove image 
-            os.remove(os.path.join(app.config['UPLOAD_FOLDER']+'upload/', book.b_image))             
+            os.remove(os.path.join(app.config['UPLOAD_FOLDER']+'upload/', book.b_image))     
+
+            section = Sections.query.get(book.s_id)
+            section.book_count-= 1         ## decrement book_count on deletion
+
             db.session.delete(book)   
             db.session.commit()
             return {'message': {'success': 'Deleted Book'}}, 200
@@ -152,11 +161,18 @@ class Download_Book(Resource):
     @auth_required('token')
     @roles_required('user')
     def get(self, issue_id):
-        user_book = UserBook.query.get(issue_id)
+        ## Check if Issue is made by current user
+        user_book = UserBook.query.filter_by(issue_id=issue_id, user_id=current_user.id).first()
         if not user_book:
-            return {'message': {'error': 'Please Issue book to be able to download'}}, 403   
+            return {'message': {'error': 'Please Issue book to be able to download'}}, 403
+        if user_book.return_date is not None:
+            return {'message': {'error': 'The book has been returned!'}}, 400
         book = Books.query.get(user_book.b_id)
-        user_actv = UserActivity.query.filter_by(user_id=current_user.id, b_id=book.b_id).first()
+        section = Sections.query.get(book.s_id)
+        author = Author.query.get(book.a_id)
+        user_actv = UserActivity.query.filter_by(user_id=current_user.id, 
+                                                book_name=book.b_name, section_name=section.s_name,
+                                                author_name=author.a_name).first()
         book.total_bought+=1                        ## Increment Total book bought in Books
         user_book.bought_price = book.pdf_price     ## Add bought price in UserBooks
         user_actv.bought_price = book.pdf_price     ## Add bought price in UserActivity
@@ -172,8 +188,8 @@ class Read_Book(Resource):
     def get(self, issue_id):         ## Read Book Only
         user_book = UserBook.query.get(issue_id)
         if (user_book is None) or (user_book.user_id!=current_user.id):
-            return {'message':{'error':'This book is not issued by you, yet.'}}, 400
+            return {'message':{'error':'This book is not issued by you, yet.'}}, 403
         if user_book.return_date is not None:
-            return {'message':{'error':'The book has already been returned!'}}, 400
+            return {'message':{'error':'The book has been returned!'}}, 400
         book = Books.query.get(user_book.b_id)
         return {'content_link_view': book.content_link_view}, 200

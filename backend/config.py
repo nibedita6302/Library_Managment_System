@@ -23,7 +23,7 @@ class Config():
 class LocalDevelopmentConfig(Config):
     SQLITE_DB_DIR = os.path.join(basedir, "db_directory/")
     UPLOAD_FOLDER=os.path.join(topdir,'frontend/src/assets/')
-    SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(SQLITE_DB_DIR, "library-managment-v2o4.sqlite3")
+    SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(SQLITE_DB_DIR, "library-managment-v3.sqlite3")
     DEBUG = True
     #LOGIN_URL = 'http://localhost:8000/login'
     SECRET_KEY =  "@@secretkey@@"

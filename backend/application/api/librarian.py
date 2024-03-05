@@ -68,11 +68,13 @@ class Issue_Request_Approval(Resource):
                 ## create UserBook association
                 user_book = UserBook(b_id=book_id, user_id=user_id) 
                 db.session.add(user_book)
-                db.session.commit()
 
                 ## Create User Activity Instance
                 book = Books.query.get(book_id)
-                book.total_issue+=1                 ## Increment Total Issues in Book
+                if book.total_issue is not None:
+                    book.total_issue+=1                 ## Increment Total Issues in Book
+                else:
+                    book.total_issues=1
 
                 section = Sections.query.get(book.s_id)
                 author = book.writer[0]

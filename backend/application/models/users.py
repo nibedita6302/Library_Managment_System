@@ -16,6 +16,7 @@ class Users(db.Model, UserMixin):
     name = Column(String(), nullable=False)
     password = Column(String(255), nullable=False)
     active = Column(Boolean, nullable=False, default=True) 
+    latest_activity = Column(DateTime())
     fs_uniquifier = Column(String(255), unique=True) 
     #relationships
     roles = db.relationship('Role', secondary=RoleUsers, backref='assignedTo') 

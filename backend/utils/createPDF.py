@@ -8,9 +8,10 @@ from reportlab.lib.styles import getSampleStyleSheet
 from utils.analytics import *
 from .generateGraphs import pieChart
 
-def create_pdf(filename, user_id):
+def create_pdf(user_id):
     month = datetime.now().strftime('%B')
-    file_path = f"./static/pdfs/{filename}"
+    year = datetime.now().strftime('%Y')
+    file_path = f"./static/pdfs/{month}_{year}.pdf"
     doc = SimpleDocTemplate(file_path, pagesize=A4)     # Create a PDF document
 
     # Create a list to hold the content of the PDF
@@ -66,13 +67,7 @@ def create_pdf(filename, user_id):
         text_paragraph = Paragraph(text, getSampleStyleSheet()["BodyText"])
         elements.append(text_paragraph)
 
-    # Build the PDF document
+    # Build the PDF document - Saves the PDF in path
     doc.build(elements)
-    year = datetime.now().strftime('%Y')
-    output_file = f"./static/pdfs/{filename}_{year}.pdf"
-    
-    ## How is the pdf getting saved??
-
-    print(f"PDF created successfully: {output_file}")
-
-    return output_file
+    print(f"PDF created successfully: {file_path}")
+    return file_path

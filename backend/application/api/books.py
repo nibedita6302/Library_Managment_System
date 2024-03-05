@@ -7,6 +7,7 @@ from flask import request, jsonify, current_app as app
 from flask_login import current_user
 from flask_security import auth_required, roles_required
 
+from application.models.users import Users
 from application.models.books import Books, Sections, Author
 from application.models.user_book_activity import UserBook, UserActivity
 
@@ -168,14 +169,19 @@ class Download_Book(Resource):
         if user_book.return_date is not None:
             return {'message': {'error': 'The book has been returned!'}}, 400
         book = Books.query.get(user_book.b_id)
-        section = Sections.query.get(book.s_id)
-        author = Author.query.get(book.a_id)
-        user_actv = UserActivity.query.filter_by(user_id=current_user.id, 
-                                                book_name=book.b_name, section_name=section.s_name,
-                                                author_name=author.a_name).first()
-        book.total_bought+=1                        ## Increment Total book bought in Books
+        # section = Sections.query.get(book.s_id)
+        # author = Author.query.get(book.a_id)
+        user_actv = UserActivity.query.get(issue_id)
+        if book.total_bought is None:
+            book.total_bought = 1
+        else:
+            book.total_bought+=1                    ## Increment Total book bought in Books
         user_book.bought_price = book.pdf_price     ## Add bought price in UserBooks
         user_actv.bought_price = book.pdf_price     ## Add bought price in UserActivity
+
+        user = Users.query.get(current_user.id)      
+        user.latest_activity = datetime.now()       ## Set User Activity
+
         db.session.commit()
 
         ## Asynchronous Download from link
@@ -185,11 +191,14 @@ class Download_Book(Resource):
 class Read_Book(Resource):
     @auth_required('token')
     @roles_required('user')
-    def get(self, issue_id):         ## Read Book Only
+    def get(self, issue_id):                        ## Read Book Only
         user_book = UserBook.query.get(issue_id)
         if (user_book is None) or (user_book.user_id!=current_user.id):
             return {'message':{'error':'This book is not issued by you, yet.'}}, 403
         if user_book.return_date is not None:
             return {'message':{'error':'The book has been returned!'}}, 400
         book = Books.query.get(user_book.b_id)
+        user = Users.query.get(current_user.id)      
+        user.latest_activity = datetime.now()       ## Set User Activity
+        db.session.commit()
         return {'content_link_view': book.content_link_view}, 200

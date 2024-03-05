@@ -20,7 +20,6 @@ class IssueRequest(db.Model):
     def __repr__(self) -> str:
         return f"Issue-Request - {self.b_id}:{self.users_id} - Status: {self.status}" 
 
-
 ## many-to-many relationship table between Users and Books
 ## Same book can be issued by the same user multiple times (after being returned)
 class UserBook(db.Model): 

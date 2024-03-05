@@ -31,6 +31,10 @@ class Issue_Book_Request(Resource):
     def post(self, book_id):        ## Request for book issue 
         if len(current_user.user_book)==5:      ## Maximum issue limit = 5 books
             return {'message':{'error':'Issue Request Declines. You can issue upto 5 book at a time'}}, 400
+        book = Books.query.get(book_id)
+        if not book:
+            return {'message':{'error':'Issue Request Declines. Book does not exist'}}, 400
+
         user_books = UserBook.query.filter_by(user_id=current_user.id,      ## Book issued by user 
                                               b_id=book_id,                 ## But not returned yet
                                               return_date=None).first()

@@ -1,5 +1,5 @@
 import os
-from flask import Flask, Blueprint
+from flask import Flask
 from flask_restful import Api
 from flask_cors import CORS
 from config import LocalDevelopmentConfig, StageConfig
@@ -90,26 +90,11 @@ with app.app_context():
     print('All models created.')
     # create default roles and librarian
     create_default_data(librarian_email='nibedita.6302@gmail.com', yourname='Nibedita C.')
-    # other default functions
-    # ...
     print('All default data created.')
-
-# """ except Exception as e:
-#   if 'UNIQUE constraint failed' in str(e) or 'already exists' in str(e):
-#     print('Ignored Unique Constraint Failed due to duplicate request')
-#   else:
-#     raise Exception(e)
-#  """
 
 @login_manager.user_loader
 def load_user(user_id):
    return Users.query.get(int(user_id)) 
-
-""" 
-@app.route('/test1')
-def test():
-   return "this is test1 from main.py"
-"""
 
 ## Setup all APIs
 from application.api.configure_routes import config_all_resource

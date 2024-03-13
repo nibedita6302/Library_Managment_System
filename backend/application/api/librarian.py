@@ -2,7 +2,6 @@ import os
 from datetime import datetime, timedelta
 from flask_restful import Resource, fields, marshal, reqparse
 from application.database import db
-from security import datastore
 from flask import request, jsonify, current_app as app
 from flask_login import current_user
 from flask_security import auth_required, roles_required
@@ -62,30 +61,30 @@ class Issue_Request_Approval(Resource):
         if ('approval' in jsonData) and (ir1 is not None):
             if ir1.status!=2:
                 return {'message':{'error':'The issue had been already Accepted or Rejected'}}, 400
-            if jsonData['approval']==1:
+            if jsonData['approval']==1:             ## Accept Request
                 ir1.status = jsonData['approval']
 
                 ## create UserBook association
                 user_book = UserBook(b_id=book_id, user_id=user_id) 
                 db.session.add(user_book)
 
-                ## Create User Activity Instance
                 book = Books.query.get(book_id)
                 if book.total_issue is not None:
                     book.total_issue+=1                 ## Increment Total Issues in Book
                 else:
                     book.total_issues=1
 
+                ## Create User Activity Instance
                 section = Sections.query.get(book.s_id)
-                author = book.writer[0]
+                author = book.writer[0]                
                 user_actv = UserActivity(user_id=user_id, book_name=book.b_name, 
                                          section_name = section.s_name, author_name=author.a_name,
-                                         issue_date = user_book.issue_date) 
+                                         issue_date = user_book.issue_date)     
                 db.session.add(user_actv)
                 db.session.commit()
 
                 ## Send mail to User - Celery
-                ## Delete IssueRequest if not PENDING - Celery
+                ## Delete IssueRequest if not PENDING - Celery (Once a day)
 
                 return {'message':{'success':'Issue Request has been Accepted'}}, 200
             elif jsonData['approval']==0:

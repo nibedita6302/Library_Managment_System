@@ -6,8 +6,6 @@ from sqlalchemy import Integer, String, Boolean, DateTime, Float, ForeignKey,  C
 AuthorBook = db.Table('author_book',
     Column('b_id', Integer(), ForeignKey('books.b_id', ondelete="CASCADE"), primary_key=True), # books
     Column('a_id',Integer(), ForeignKey('authors.a_id', ondelete="CASCADE"), primary_key=True),  # authors
-    Column('read_count',Integer(), nullable=False, default=0),
-    Column('bought_count', Integer(), nullable=False, default=0)
 )
 
 class Books(db.Model):

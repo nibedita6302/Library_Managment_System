@@ -35,16 +35,16 @@ def create_pdf(user_id):
     img = Image(image_path, width=300, height=300)   # Add an image
     elements.append(img)
 
-    text = "Store Manager and Admin Logs Table\n\n"
+    text = "Top 5 Library Rankers, Are you one of them?\n\n"
     text_paragraph = Paragraph(text, getSampleStyleSheet()["Heading2"])
     elements.append(text_paragraph)
 
     # Add a table
     data2 = [
-        ['Username', 'Rank']
+        ['Username', 'Rank', 'Book Issues']
     ]
     objects2 = user_ranking()
-    for i in range(len(objects2)):
+    for i in range(min(len(objects2),5)):   ## Display atmost top 5 Rankings
         data2.append([objects2.name, i])
 
     table = Table(data2, style=[
@@ -62,6 +62,7 @@ def create_pdf(user_id):
     text_paragraph = Paragraph(text, getSampleStyleSheet()["Heading2"])
     elements.append(text_paragraph)
     objects3 = fav_author(user_id)
+    ## Make this bar graph
     for obj in objects3:
         text = f"Author - {obj.author_name}\t\tReads:{obj.count}\n\n"
         text_paragraph = Paragraph(text, getSampleStyleSheet()["BodyText"])

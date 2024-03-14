@@ -40,28 +40,26 @@ def create_app():
     
     login_manager.init_app(app)
 
-    # setting up flask security for Users
-    app.security = Security(app, datastore)
+    app.security = Security(app, datastore)   # setting up flask security for Users
 
     api = Api(app, prefix='/api')
     app.app_context().push()   
     CORS(app, supports_credentials=True)
     
-    # Create celery   
+    ## Create Celery instance
     celery = workers.celery
 
-    # Update with configuration
-    celery.conf.update(
-       broker_url = app.config["CELERY_BROKER_URL"],
-       result_backend = app.config["CELERY_RESULT_BACKEND"],
-       timezone = 'Asia/Kolkata'
+    celery.conf.update(                                       ## Update with configuration
+        broker_url = app.config["CELERY_BROKER_URL"],
+        result_backend = app.config["CELERY_RESULT_BACKEND"],
+        timezone = 'Asia/Kolkata'
     )
     celery.Task = workers.ContextTask
+
     app.app_context().push()
     print('Celery Initiated...')
 
-    # setting up Cache
-    cache = get_cache()
+    cache = get_cache()     # setting up Cache
     cache.init_app(app)
     app.app_context().push()
     print('Cache Setup...')
@@ -72,10 +70,7 @@ login_manager = LoginManager()
 app ,api, celery= create_app()
 print("Create app complete")
 
-#setup blueprint
-#app.register_blueprint(sse,url_prefix='/stream')
-
-## import models in main
+## Import models in main
 from application.models.users import Users, Role, RoleUsers
 from application.models.books import Books, Sections, Author, AuthorBook
 from application.models.user_book_activity import UserBook, UserActivity

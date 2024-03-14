@@ -1,4 +1,3 @@
-
 from flask_security import SQLAlchemySessionUserDatastore
 from application.models.users import Users, Role
 from application.database import db

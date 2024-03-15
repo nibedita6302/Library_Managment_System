@@ -7,12 +7,12 @@ from email.mime.multipart import MIMEMultipart
 from .createPDF import create_pdf
 
 from application.models.users import Users
+from utils.sendEmails import get_email_credential
 
 def sendEmail(user_id, email_type='reminder'):
     ## Email account details
-    sender_email = "nibedita.6302@gmail.com"
-    app_password = "tjut zhyb jyuo vrum"    ## Replace with your generated App Password    
-    user = Users.query.get(user_id)         ## Get recievers details
+    sender_email, app_password = get_email_credential()
+    user = Users.query.get(user_id)     ## Get recievers details
 
     ## Set up the email details
     if email_type=='reminder':  

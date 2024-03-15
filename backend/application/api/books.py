@@ -1,15 +1,16 @@
 import os
 from datetime import datetime
-from flask_restful import Resource, fields, marshal, reqparse
+from flask import send_file
+from flask_restful import Resource, fields, marshal
 from application.database import db
-from security import datastore
-from flask import request, jsonify, current_app as app
+from flask import request, current_app as app
 from flask_login import current_user
 from flask_security import auth_required, roles_required
 
 from application.models.users import Users
 from application.models.books import Books, Sections, Author
 from application.models.user_book_activity import UserBook, UserActivity
+from application.jobs.Tasks import asyncDownload as asD
 
 book_field = {
     "b_id": fields.Integer,
@@ -169,8 +170,11 @@ class Download_Book(Resource):
         if user_book.return_date is not None:
             return {'message': {'error': 'The book has been returned!'}}, 400
         book = Books.query.get(user_book.b_id)
-        # section = Sections.query.get(book.s_id)
-        # author = Author.query.get(book.a_id)
+
+        result = asD.download_pdf.delay(book.content_link_download)
+        if result!='SUCCESS':
+            return {'message': {'error': 'Download unsuccessful'}}, 400
+
         user_actv = UserActivity.query.get(issue_id)
         if book.total_bought is None:
             book.total_bought = 1
@@ -184,8 +188,8 @@ class Download_Book(Resource):
 
         db.session.commit()
 
-        ## Asynchronous Download from link
-        return {'content_link_download':book.content_link_download}, 200 
+        ## Send file as attachement to be downloaded
+        return send_file(result.get(), as_attachment=True, attachement_filename=book.b_name+'.pdf')
     
 ## API for only reading books
 class Read_Book(Resource):

@@ -13,7 +13,7 @@ from application.models.user_book_activity import UserBook, UserActivity
 from application.jobs.Tasks import asyncDownload as asD
 
 book_field = {
-    "b_id": fields.Integer,
+    "b_id": fields.Integer, 
     "s_id": fields.Integer,
     "a_id": fields.Integer,
     "b_name": fields.String,

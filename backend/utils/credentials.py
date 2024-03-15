@@ -33,7 +33,7 @@ def validate_password(password):
 
 def get_email_credential():
     sender_email = "nibedita.6302@gmail.com"
-    app_password = "tjut zhyb jyuo vrum"    ## Replace with your generated App Password  
+    app_password = "nuvz avcz ibhk yhbn"    ## Replace with your generated App Password  
     return sender_email, app_password
 
 # Testing

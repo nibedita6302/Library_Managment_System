@@ -1,7 +1,7 @@
 from celery import Celery
 from flask import current_app as app
 
-celery = Celery('Digital Library App', include=['application.jobs.Tasks.asyncDownload.py'])
+celery = Celery('Digital Library App', include=['application.jobs.Tasks.asyncDownload'])
 
 # Create a subclass of the task 
 # that wraps the task execution in an application context.

@@ -7,7 +7,7 @@ from email.mime.multipart import MIMEMultipart
 from .createPDF import create_pdf
 
 from application.models.users import Users
-from utils.sendEmails import get_email_credential
+from .credentials import get_email_credential
 
 def sendEmail(user_id, email_type='reminder'):
     ## Email account details

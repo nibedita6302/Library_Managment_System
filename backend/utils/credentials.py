@@ -31,7 +31,11 @@ def validate_password(password):
     # .{8,} - atleast 8 characters long
     return re.match(pattern, password) is not None
 
+def get_email_credential():
+    sender_email = "nibedita.6302@gmail.com"
+    app_password = "tjut zhyb jyuo vrum"    ## Replace with your generated App Password  
+    return sender_email, app_password
 
 # Testing
-print(validate_email('hello1.2.3@hello.gov.in'))
-print( validate_password('hello12@A') )
+# print(validate_email('hello1.2.3@hello.gov.in'))
+# print( validate_password('hello12@A') )

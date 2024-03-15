@@ -10,10 +10,10 @@ from flask_security import auth_required, roles_required
 from application.models.users import Users
 from application.models.books import Books, Sections, Author
 from application.models.user_book_activity import UserBook, UserActivity
-from application.jobs.Tasks import asyncDownload as asD
+from application.jobs.Tasks.asyncDownload import download_pdf
 
 book_field = {
-    "b_id": fields.Integer,
+    "b_id": fields.Integer, 
     "s_id": fields.Integer,
     "a_id": fields.Integer,
     "b_name": fields.String,
@@ -171,8 +171,9 @@ class Download_Book(Resource):
             return {'message': {'error': 'The book has been returned!'}}, 400
         book = Books.query.get(user_book.b_id)
 
-        result = asD.download_pdf.delay(book.content_link_download)
-        if result!='SUCCESS':
+        result = download_pdf.delay(book.content_link_download)
+        pdf_file = result.get()
+        if result.status!='SUCCESS':
             return {'message': {'error': 'Download unsuccessful'}}, 400
 
         user_actv = UserActivity.query.get(issue_id)
@@ -189,7 +190,7 @@ class Download_Book(Resource):
         db.session.commit()
 
         ## Send file as attachement to be downloaded
-        return send_file(result.get(), as_attachment=True, attachement_filename=book.b_name+'.pdf')
+        return send_file(pdf_file, as_attachment=True, download_name=book.b_name+'.pdf')
     
 ## API for only reading books
 class Read_Book(Resource):

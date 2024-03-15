@@ -7,7 +7,7 @@ from email.mime.multipart import MIMEMultipart
 from .createPDF import create_pdf
 
 from application.models.users import Users
-from utils.sendEmails import get_email_credential
+from .credentials import get_email_credential
 
 def sendEmail(user_id, email_type='reminder'):
     ## Email account details
@@ -17,7 +17,8 @@ def sendEmail(user_id, email_type='reminder'):
     ## Set up the email details
     if email_type=='reminder':  
         subject = "Library Reminder"
-        body = f'''Dear {user.name}, 
+        body = f'''
+        Dear {user.name}, 
         We see that you have not visited the Online Library.
         Please visit and have a look at you favourite books and authors under MyBooks.
 
@@ -27,7 +28,8 @@ def sendEmail(user_id, email_type='reminder'):
         '''
     else:
         subject = "Monthly Activity Report - Online Library"
-        body = '''The wait is over! 
+        body = '''
+        The wait is over! 
         Your Monthly activity report is atlast here. Check it out Now!
         Regards
         Librarian

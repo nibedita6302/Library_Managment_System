@@ -1,6 +1,8 @@
 import requests
 import tempfile
+from application.jobs.workers import celery
 
+@celery.task()
 def download_pdf(url):
     response = requests.get(url)
     temp_pdf = tempfile.NamedTemporaryFile(delete=False, suffix='.pdf')     ## Create temporary pdf file

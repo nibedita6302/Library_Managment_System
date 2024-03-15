@@ -6,7 +6,7 @@ from reportlab.lib import colors
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Image, Paragraph
 from reportlab.lib.styles import getSampleStyleSheet
 
-from analytics import *
+from .analytics import *
 from .generateGraphs import create_bar_graph, create_pie_chart
 
 def create_pdf(user_id):

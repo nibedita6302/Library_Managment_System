@@ -19,7 +19,7 @@ def fav_author(user_id):
 
 def user_ranking():
     ## Ranking in different book reads (top 3 & current user rank)
-    ranking = db.session.query(Users.name, db.func.count().label("Book Issues"))\
+    ranking = db.session.query(Users.name.label('name'), db.func.count().label("issue_count"))\
                 .join(UserActivity, Users.id==UserActivity.user_id)\
                 .group_by(UserActivity.user_id)\
                 .order_by(db.func.count().desc()).all()

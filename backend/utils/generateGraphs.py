@@ -6,18 +6,22 @@ month = datetime.now().strftime('%B')
 year = datetime.now().strftime('%Y')
 
 def create_pie_chart(data, title, filename):    ## Image Only
-    labels = data.keys()
-    values = data.values()
+    labels = list(data.keys())
+    values = list(data.values())
 
     fig = go.Figure(data=[go.Pie(labels=labels, values=values)])
     fig.update_layout(title_text=title, width=500, height=500)
     
     # pio.show(fig)
-    pio.write_image(fig, './static/graphs/'+filename + ".jpeg")      
+    file_path = './static/graphs/'+filename + ".jpeg"
+    pio.write_image(fig, file_path)   
+    return file_path
+
 
 def create_bar_graph(data, title, filename):    ## Image Only
-    x = data.keys()
-    y = data.values()
+    x = list(data.keys())
+    y = list(data.values())
+    
     color = ['cyan', 'purple', 'green', 'orange', 'pink', 'lightgreen','violet', 'blue', 'red', 'yellow', 'olive']
     color_set = color*(len(x)//len(color) + 1)
 
@@ -28,20 +32,24 @@ def create_bar_graph(data, title, filename):    ## Image Only
                       width=800, height=600)    # Set overall graph size
 
     # pio.show(fig)
-    pio.write_image(fig, './static/graphs/'+filename + ".jpeg")  
+    file_path = './static/graphs/'+filename + ".jpeg"
+    pio.write_image(fig, file_path)   
+    return file_path
 
 def html_pie_chart(data, title, filename):  ## HTML Only
-    labels = data.keys()
-    values = data.values()
+    labels = list(data.keys())
+    values = list(data.values())
 
     fig = go.Figure(data=[go.Pie(labels=labels, values=values)])
     fig.update_layout(title_text=title, width=500, height=500)
 
-    pio.write_html(fig, './static/graphs/'+filename+'.html')    
+    file_path = './static/graphs/'+filename+'.html'
+    pio.write_html(fig, file_path)    
+    return file_path
 
 def html_bar_chart(data, title, filename):  ## HTML Only
-    x = data.keys()
-    y = data.values()
+    x = list(data.keys())
+    y = list(data.values())
 
     color = ['cyan', 'purple', 'green', 'orange', 'pink', 'lightgreen','violet', 'blue', 'red', 'yellow', 'olive']
     color_set = color*(len(x)//len(color) + 1)
@@ -52,4 +60,6 @@ def html_bar_chart(data, title, filename):  ## HTML Only
                       plot_bgcolor='lightyellow',  # Set plot area color
                       width=800, height=600)    # Set overall graph size
     
-    pio.write_html(fig, './static/graphs/'+filename+'.html') 
+    file_path = './static/graphs/'+filename+'.html'
+    pio.write_html(fig, file_path)    
+    return file_path

@@ -23,7 +23,7 @@ def create_pdf(user_id):
     header_text = Paragraph(f"<b>MONTHLY ACTIVITY REPORT - {month}</b>", header_style)
     elements.append(header_text)
 
-    ## Add Section Distribution Pie Chart
+    ## ----------Add Section Distribution Pie Chart------------
     text = "Genre Distribution Chart\n\n"
     text_paragraph = Paragraph(text, getSampleStyleSheet()["Heading2"])
     elements.append(text_paragraph)
@@ -33,32 +33,10 @@ def create_pdf(user_id):
         data1[obj.section_name] = obj.count
     image_path = create_pie_chart(data=data1, title='Reader Preference Pie',    ## Add the pie chart
                                   filename=f'pie_{month}_{year}')   
-    img = Image(image_path, width=4*inch, height=4*inch)   
+    img = Image(image_path, width=3*inch, height=3*inch)   
     elements.append(img)
 
-    ## Library Rankers Table
-    text = "Top 5 Library Rankers, Are you one of them?\n\n"
-    text_paragraph = Paragraph(text, getSampleStyleSheet()["Heading2"])
-    elements.append(text_paragraph)
-    data2 = [
-        ['Username', 'Rank', 'Book Issues']         ## Add a table
-    ]
-    objects2 = user_ranking()
-    for i in range(min(len(objects2),5)):   ## Display atmost top 5 Rankings
-        data2.append([objects2.name, i])
-
-    table = Table(data2, style=[
-        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-        ('GRID', (0, 0), (-1, -1), 1, colors.black)
-    ])
-    elements.append(table)
-
-    ## Favourite Author Graph
+    ## ----------------Favourite Author Graph-------------------
     text = "My Favourite Authors\n\n"
     text_paragraph = Paragraph(text, getSampleStyleSheet()["Heading2"])
     elements.append(text_paragraph)
@@ -69,7 +47,31 @@ def create_pdf(user_id):
         data1[obj.author_name] = obj.count
     image_path = create_bar_graph(data=data1, title='Author Read-o-Meter',    ## Add the pie chart
                                   filename=f'bar_{month}_{year}')   
-    
+    img = Image(image_path, width=6*inch, height=4*inch)   
+    elements.append(img)
+
+    ## ----------------Library Rankers Table--------------------
+    text = "Top 5 Library Rankers, Are you one of them?\n\n"
+    text_paragraph = Paragraph(text, getSampleStyleSheet()["Heading2"])
+    elements.append(text_paragraph)
+    data2 = [
+        ['Rank', 'Username', 'Book Issues']         ## Add a table
+    ]
+    objects2 = user_ranking()
+    for i in range(min(len(objects2),5)):   ## Display atmost top 5 Rankings
+        data2.append([i+1, objects2[i].name, objects2[i].issue_count])
+
+    table = Table(data2, style=[
+        ('BACKGROUND', (0, 0), (-1, 0), colors.green),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.white),
+        ('GRID', (0, 0), (-1, -1), 0, colors.black)
+    ])
+    elements.append(table)
+
     ## Build the PDF document - Saves the PDF in path
     doc.build(elements)
     print(f"PDF created successfully: {file_path}")

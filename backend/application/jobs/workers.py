@@ -2,7 +2,7 @@ from celery import Celery
 from flask import current_app as app
 
 celery = Celery('Digital Library App', include=['application.jobs.Tasks.asyncDownload',
-                                                'application.jobs.Tasks.dailyReminder'])
+                                                'application.jobs.Tasks.timelyEmails'])
 
 # Create a subclass of the task 
 # that wraps the task execution in an application context.

@@ -1,6 +1,6 @@
 <template>
   <PopupMessage v-if="showPopup"
-        message="This is a demo popup"
+        message="This is a demo popup. Some more random text!! Alert!!"
         showConfirm="confirm"
         confirm_text="Confirm Button"
         @cancel="handleCancel"

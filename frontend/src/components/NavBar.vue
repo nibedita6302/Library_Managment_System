@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container-fluid">
       <!-- Toggle Button -->
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" 
@@ -70,6 +70,9 @@ export default {
 <style scoped>
   .active {
     border-bottom: 2px solid white;
+  }
+  .navbar{
+    background-color: green;
   }
 </style>
  

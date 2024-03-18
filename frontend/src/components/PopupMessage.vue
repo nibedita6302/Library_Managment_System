@@ -1,14 +1,12 @@
 <template>
-    <div v-if="isVisible" class="popup-message">
-        <div class="popup-content">
-            <p>{{ message }}</p>
-            <div v-if="showCancel">
-                <button @click="handleCancle">{{ cancel_text }}</button>
-            </div>
-            <div v-if="showConfirm">
-                <button @click="handleConfirm">{{ confirm_text }}</button>
-            </div>
-        </div>
+    <div v-if="isVisible" class="alert alert-warning fade show text-center" role="alert" >
+        <h5 class="alert-heading">{{ message }}</h5>
+        <button v-if="showCancel" @click="handleCancel" type="button" class="btn btn-secondary">
+            {{ cancel_text }}
+        </button> &nbsp;
+        <button v-if="showConfirm" @click="handleConfirm" type="button" class="btn btn-success">
+            {{ confirm_text }}
+        </button>
     </div>
 </template>
 
@@ -30,7 +28,7 @@ export default{
         },
         showConfirm: {
             type: Boolean, 
-            required: false
+            default: false
         },
         confirm_text: {
             type: String,
@@ -43,7 +41,7 @@ export default{
         }
     },
     methods: {
-        handleCancle(){
+        handleCancel(){
             this.isVisible = false,
             this.$emit('cancel');
         },
@@ -57,19 +55,5 @@ export default{
 </script>
 
 <style scoped>
-
-.popup-message{
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: white;
-    border: 1px solid black;
-    padding: 20px;
-}
-.popup-content{
-    display: flex;
-    flex-direction: column;
-}
 
 </style>

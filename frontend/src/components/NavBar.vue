@@ -47,23 +47,15 @@
 </template>
 
 <script>
-// import LogoutAlert from './LogoutAlert.vue'
-// import {mapGetters} from "vuex"
 
 export default {
   name: 'NavBar',
-  // components:{
-  //   LogoutAlert
-  // },
   methods:{
     refresh(){
       const router = this.$router
       router.push('/')
     }
   }
-  // computed:{
-  //   ...mapGetters('auth',['GET_USER_ROLE'])
-  // }
 }
 </script>
 
@@ -72,7 +64,8 @@ export default {
     border-bottom: 2px solid white;
   }
   .navbar{
-    background-color: green;
+    background-color: brown;
+    font-size: large;
   }
 </style>
  

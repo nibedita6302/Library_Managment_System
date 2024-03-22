@@ -1,15 +1,17 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue';
+import SearchPage from '@/components/SearchPage.vue';
 
 const routes = [
-  { path: '/', component: HomeView },
+  { path: '/', name: 'HomeView' ,component: HomeView },
+  { path: '/search', name: 'SearchPage', component: SearchPage },
   // { path: '/mybooks', component: MyBooksView },
   // { path: '/mystats', component: MyStatsView },
   // { path: '/myprofile', component: MyProfileView },
   // { path: '/issues', component: IssuesView },
   // { path: '/analytics', component: AnalyticsView },
-  { path: '/login', component: LoginView },
+  { path: '/login', name: 'LoginView' ,component: LoginView },
 
 ]
 

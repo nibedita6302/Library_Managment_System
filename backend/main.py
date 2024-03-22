@@ -44,7 +44,8 @@ def create_app():
 
     api = Api(app, prefix='/api')
     app.app_context().push()   
-    CORS(app, supports_credentials=True)
+    CORS(app, supports_credentials=True, origins='http://localhost:8080', 
+         methods=['GET', 'POST', 'DELETE', 'PUT'])
     
     ## Create Celery instance
     celery = workers.celery

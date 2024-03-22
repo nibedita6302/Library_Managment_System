@@ -24,9 +24,10 @@ book_field = {
 
 
 class SearchBooks(Resource):
-    def get(self):
-        jsonData = request.get_json()
-        if jsonData['search'].strip() == '':
+    def post(self):
+        jsonData = request.get_json() 
+        print(jsonData)
+        if ('search' not in jsonData) and (jsonData['search'].strip() == ''):
             return {"message":
                     {"error":"No matching book found. Please check for any spelling mistakes!"}
                 }, 404

@@ -14,21 +14,21 @@
           </li>
 
           <!-- User -->
-          <li class="nav-item">
+          <li v-if="user.role=='user'" class="nav-item">
             <router-link to='/mybooks' active-class="active" class="nav-link">My Books</router-link>
           </li>
-          <li class="nav-item">
+          <li v-if="user.role=='user'" class="nav-item">
             <router-link to='/mystats' active-class="active" class="nav-link">My Stats</router-link>
           </li>
-          <li class="nav-item">
+          <li v-if="user.role=='user'" class="nav-item">
             <router-link to='/myprofile' active-class="active" class="nav-link">My Profile</router-link>
           </li>
 
           <!-- Librarian -->
-          <li class="nav-item">
+          <li v-if="user.role=='librarian'" class="nav-item">
             <router-link to='/issues' active-class="active" class="nav-link">Issues</router-link>
           </li>
-          <li class="nav-item">
+          <li v-if="user.role=='librarian'" class="nav-item">
             <router-link to='/analytics' active-class="active" class="nav-link">Analytics</router-link>
           </li>
 
@@ -44,17 +44,30 @@
       </div>
     </div>
   </nav>
+  {{ user.role }}
 </template>
 
 <script>
 
 export default {
   name: 'NavBar',
-  methods:{
-    refresh(){
-      const router = this.$router
-      router.push('/')
+  data(){
+    return {
+      user: {},
     }
+  },
+  methods:{
+    getLoggedInUser(){
+      const user = localStorage.getItem('user');
+      if (user){
+        this.user = user;
+      }else{
+        this.user = {};
+      }
+    }
+  },
+  created(){
+    this.getLoggedInUser();
   }
 }
 </script>

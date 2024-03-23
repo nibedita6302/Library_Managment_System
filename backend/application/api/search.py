@@ -41,7 +41,7 @@ class SearchBooks(Resource):
             book_list.extend(b2) 
             authors = Author.query.filter(Author.a_name.ilike(item)).all()      ## Search by Author 
             for a in authors:
-                print(a.biblography)
+                # print(a.biblography)
                 book_list.extend(a.biblography) 
             sections = Sections.query.filter(Sections.s_name.ilike(item)).all() ## Search by Section
             for s in sections:

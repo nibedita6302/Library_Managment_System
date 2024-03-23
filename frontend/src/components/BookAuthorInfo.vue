@@ -1,7 +1,60 @@
 <template>
-    {{ book_details }}
-
-    {{ author_details }}
+    <div class="container p-5">
+        <div class="row g-2">
+            <div class="col-sm-4">
+                <img :src="bImage" :alt="book.b_name"/>
+            </div>
+            <div class="col-sm-8">
+                <h1>{{ book.b_name }}</h1>
+                <button class="btn btn-warning" @click="IssueBookRequest">
+                    <i class="bi bi-bookmark-star"></i>
+                    Issue Book
+                </button>
+                <hr>
+                <h4> Summary</h4>
+                <p>{{ book.summary }}</p>
+                <hr>
+                <h4 style="color: brown;">
+                    <i class="bi bi-vector-pen"></i>
+                    Author: {{ author.a_name }}
+                </h4>
+                <h5>About Author</h5>
+                <p>{{ author.about_author }}</p>
+            </div>
+        </div>
+        <hr><br>
+        <div class="row g-2">
+            <div class="col">
+                <div class="row g-2">
+                    <div class="col-9">
+                        <h3>User Review</h3>
+                    </div>
+                    <div class="col-3">
+                        <button class="btn btn-warning" @click="submitReview">
+                            <i class="bi bi-pen"></i>
+                            Post Review
+                        </button>
+                    </div>
+                </div>
+                <div class="row g-3 p-2">
+                    <p v-if="reviews.length==0">No reviews yet</p>
+                    <div class="card" v-for="r in reviews" :key="r.r_id">
+                        <p class="card-header">
+                            <i class="bi bi-person-circle"></i>
+                            {{ r.user_name }}
+                        </p>
+                        <div class="card-body">
+                            <p class="card-title">
+                                <i class="bi bi-star-fill" style="color: gold;" v-for="i in r.rating" :key="i"></i>
+                                <i class="bi bi-star" style="color: orange;" v-for="i in (5-r.rating)" :key="i"></i>
+                            </p>
+                            <i class="card-text">{{ r.review }}</i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -11,11 +64,19 @@ export default{
     data(){
         return {
             error: '',
-            book_details: null,
-            author_details: null
+            book: {},
+            author: {},
+            reviews: [],
+            bImage: '',
+            rating: 0,
+            review: ''
         }
     },
     methods:{
+        getImage(){
+            console.log("path:"+this.book.b_image);
+            this.bImage = require(`@/assets/upload/${this.book.b_image}`);
+        },
         async fetchBookByID(){
             try{
                 const res = await fetch("http://localhost:8000/api/book/"+this.book_id, {
@@ -29,19 +90,20 @@ export default{
                 if (!res.ok && res.status!=404) { throw Error("HTTP Error at Search:"+res.status) }
                 const data = await res.json() ;
                 if (res.status==404){
-                    this.error = data['message']['error'];  // set error
-                    this.book_details = null;               // reset output
+                    this.error = data.message.error;  // set error
+                    this.book = {};                   // reset output
+                    this.reviews = [];
                 }
                 else { 
-                    this.book_details = data;  // set output
-                    this.error = '';           // reset error
+                    this.book = data.book_details;  // set output
+                    this.reviews = data.reviews;
+                    this.error = '';                // reset error
                 }
             }catch(error){console.log(error);} 
         },
         async fetchAuthorDetails(){
-            const author_id = this.book_details['book_details'].a_id;
             try{
-                const res = await fetch("http://localhost:8000/api/author/"+author_id, {
+                const res = await fetch("http://localhost:8000/api/author/"+this.book.a_id, {
                     method: 'GET',
                     mode: 'cors',
                     credentials: 'include',
@@ -53,18 +115,25 @@ export default{
                 const data = await res.json() ;
                 if (res.status==404){
                     this.error = data['message']['error'];  // set error
-                    this.author_details = null;               // reset output
+                    this.author = null;               // reset output
                 }
                 else { 
-                    this.author_details = data;  // set output
+                    this.author = data;  // set output
                     this.error = '';           // reset error
                 }
             }catch(error){console.log(error);} 
+        },
+        async IssueBookRequest(){
+
+        },
+        async submitReview(){
+
         }
     },
-    async mounted(){
+    async created(){
         await this.fetchBookByID();
-        if (this.book_details!=null){
+        this.getImage();
+        if (this.book!=null){
             await this.fetchAuthorDetails();
             console.log('complete2')
         }
@@ -73,5 +142,8 @@ export default{
 </script>
 
 <style scoped>
-
+img{
+    min-height: 500px;
+    max-height: 500px;
+}
 </style>

@@ -70,7 +70,7 @@ export default{
                 if (!res.ok && res.status!=404) { throw Error("HTTP Error at Search:"+res.status) }
                 const data = await res.json() ;
                 if (res.status==404){
-                    this.error = data['message']['error'];  // set error
+                    this.error = data.message.error;  // set error
                     this.search_output = [];                // reset output
                 }
                 else { 

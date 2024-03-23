@@ -4,22 +4,25 @@
         <h4>Search On: {{ this.searchArg }}</h4>
         <p>Search Result: {{ this.search_output.length }} Found</p>
         <h5 v-if="this.error!=''">{{ this.error }}</h5>
-        <div v-else class="container p-3">
-            <div class="card mb-3" v-for="book in this.search_output" :key="book.b_id">
-                <div class="row g-0">
-                    <div class="col-md-4">
-                        <img :src="require('@/assets/upload/'+book.b_image)" 
-                            class="img-fluid rounded-start" :alt="book.b_name">
-                    </div>
-                    <div class="col-md-8">
-                        <div class="card-body">
-                            <h4 class="card-title">{{ book.b_name }}</h4>
-                            <p class="card-text">Publisher: {{ book.publisher }}</p>
-                            <p class="card-text"><small class="text-muted">
-                                Published Date: {{ this.getDate(book.date_published) }}
-                            </small></p>
-                            <p class="card-text" style="color:red">PDF Price: ₹{{ book.pdf_price }}</p>
+        <div v-else class="container p-1">
+            <div class="row g-4">
+                <div class="card col-sm-4" v-for="book in this.search_output" :key="book.b_id">
+                    <div class="row g-0">
+                        <div class="col-md-5">
+                            <img :src="require('@/assets/upload/'+book.b_image)" 
+                                class="img-fluid rounded-start" :alt="book.b_name">
                         </div>
+                        <div class="col-md-7">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ book.b_name }}</h5>
+                                <p class="card-text"><i>Publisher:</i> {{ book.publisher }}</p>
+                                <p class="card-text"><small class="text-muted">
+                                    Published Date: {{ this.getDate(book.date_published) }}
+                                </small></p>
+                                <p class="card-text" style="color:red">PDF Price: ₹{{ book.pdf_price }}</p>
+                            </div>
+                        </div>
+                        <router-link :to="'/book/'+book.b_id" class="stretched-link"></router-link>
                     </div>
                 </div>
             </div>
@@ -85,6 +88,9 @@ export default{
 
 <style scoped>
 .card{
-    max-width: 400px;
+    max-width: 100%;
+}
+img{
+    max-height: 300px;
 }
 </style>

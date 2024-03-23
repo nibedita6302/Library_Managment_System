@@ -1,7 +1,7 @@
 <template>
     <PopupMessage v-if="showPopup" :message="message" @cancel="handelCancel"></PopupMessage>
     
-    <div class="container d-flex justify-content-center p-5">
+    <div class="container d-flex justify-content-center">
         <form class="h-100" @submit.prevent="registerUser">
             <legend>New User Registration</legend>
             <div class="row mb-3 p-2">
@@ -68,3 +68,8 @@ export default {
 }
 </script>
 
+<style scoped>
+.container{
+    padding: 50px 10px 50px 10px;
+}
+</style>

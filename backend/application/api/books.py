@@ -9,6 +9,7 @@ from flask_security import auth_required, roles_required
 
 from application.models.users import Users
 from application.models.books import Books, Sections, Author
+from application.models.reviews import Reviews
 from application.models.user_book_activity import UserBook, UserActivity
 from application.jobs.Tasks.asyncDownload import download_pdf
 
@@ -31,6 +32,7 @@ review_field = {
     "r_id": fields.Integer,
     "b_id": fields.Integer,
     "user_id": fields.Integer,
+    "user_name": fields.String,
     "rating": fields.Integer,
     "review": fields.String
 }
@@ -41,8 +43,11 @@ class ManageBook(Resource):
         book = Books.query.get(book_id)
         if not book:
             return {'message': {'error': 'Book Not Found'}}, 404
-        book_reviews = book.reviews
-
+        # book_reviews = book.reviews
+        book_reviews = db.session.query(Reviews.r_id, Reviews.b_id, Reviews.user_id,
+                        Reviews.rating, Reviews.review, Users.name.label('user_name'))\
+                        .join(Reviews, Reviews.user_id==Users.id)\
+                        .filter(Reviews.b_id==book.b_id).all()
         return {
             "book_details": marshal(book, book_field),
             "reviews": marshal(book_reviews, review_field)

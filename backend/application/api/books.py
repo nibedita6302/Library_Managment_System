@@ -143,7 +143,8 @@ class ManageBook(Resource):
             if len(active_issuers)>0:
                 ## 409 HTTP Code for Conflict with current state of target resource
                 return {'message': {
-                            'error': 'Cannot delete Book because it still has associated issues. Please revoke all issues first.'
+                            'error': 'Cannot delete Book because it still has associated issues.\
+                                  Please revoke all issues first.'
                         }}, 409   
             ## Remove image 
             os.remove(os.path.join(app.config['UPLOAD_FOLDER']+'upload/', book.b_image))     

@@ -2,7 +2,7 @@ from flask_restful import Resource, fields, marshal, reqparse
 from application.database import db
 from security import datastore
 from flask import request, jsonify
-from flask_login import current_user
+from flask_login import current_user, logout_user
 from flask_security import auth_required, roles_required
 
 from application.models.users import Users, RoleUsers
@@ -12,6 +12,8 @@ class UserRegister(Resource):
     ## Register new User
     def post(self): 
         jsonData = request.get_json()
+        if current_user:                ## Logout if registered
+            logout_user()
         ## Check if all fields are filled
         if ('email' not in jsonData) or ('name' not in jsonData) or ('password' not in jsonData):
             return {'message': {'error': 'All fields are compulsory'}}, 400
@@ -23,8 +25,8 @@ class UserRegister(Resource):
                 return {'message': {'error': 'Invalid Email'}}, 400
             ## If NOT valid password (utils)
             elif not validate_password(jsonData['password']):
-                return {'message': {'error': 'Password must have atleast one Upper Case Letter,\
-                                     Lower Case Letter, Special Character and a number.\
+                return {'message': {'error': 'Password must have atleast 1 Upper Case Letter,\
+                                     1 Lower Case Letter, 1 Special Character and a number.\
                                     Password must have 8 or more characters.'}}, 400
             else:
                 user = datastore.create_user(email=jsonData['email'], name=jsonData['name'],

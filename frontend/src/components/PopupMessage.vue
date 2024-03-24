@@ -1,11 +1,12 @@
 <template>
-    <div v-if="isVisible" class="alert alert-warning fade show text-center" role="alert" >
-        <h5 class="alert-heading">{{ message }}</h5>
-        <button v-if="showCancel" @click="handleCancel" type="button" class="btn btn-secondary">
-            {{ cancel_text }}
+    <div v-if="isVisible" role="alert"
+    :class='"alert alert-"+(alert_type? alert_type: "warning")+" fade show text-center"'  >
+        <i class="alert-heading">{{ message }}</i><br>
+        <button v-if="showCancel" @click="handleCancel" type="button" class="btn btn-outline-dark">
+            {{ cancel_text? cancel_text: 'Close' }}
         </button> &nbsp;
-        <button v-if="showConfirm" @click="handleConfirm" type="button" class="btn btn-success">
-            {{ confirm_text }}
+        <button v-if="showConfirm" @click="handleConfirm" type="button" class="btn btn-outline-success">
+            {{ confirm_text? confirm_text: 'Confirm' }}
         </button>
     </div>
 </template>
@@ -23,7 +24,7 @@ export default{
             default: true
         },
         cancel_text: {
-            type: String, 
+            type: String,  
             default: 'Close'
         },
         showConfirm: {
@@ -33,6 +34,10 @@ export default{
         confirm_text: {
             type: String,
             default: 'Confirm'
+        },
+        alert_type: {
+            type: String,
+            default: 'warning'
         }
     },
     data() {
@@ -55,5 +60,7 @@ export default{
 </script>
 
 <style scoped>
-
+button{
+    font-size: small;
+}
 </style>

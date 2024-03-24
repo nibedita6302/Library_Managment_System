@@ -4,6 +4,7 @@
     <PopupMessage v-if="showPopup"
           message="This is a demo popup. Some more random text!! Alert!!"
           showConfirm="confirm"
+          :cancel_text=null
           confirm_text="Confirm Button"
           @cancel="handleCancel"
           @confirm="handleConfirm">

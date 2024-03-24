@@ -1,5 +1,6 @@
 <template>
-    <PopupMessage v-if="showPopup" :message="message" @cancel="handelCancel"></PopupMessage>
+    <PopupMessage v-if="showPopup" :message="message" :alert_type="alert_type"
+    @cancel="handelCancel"></PopupMessage>
     
     <div class="container d-flex justify-content-center">
         <form class="h-100" @submit.prevent="loginUser">
@@ -35,18 +36,11 @@ export default {
             email: '',
             password: '',
             message: '',
-            showPopup: false
+            showPopup: false,
+            alert_type: null
         }
     },
     methods: {
-        loginUser(){
-            if (this.password==''||this.email==''){
-                this.message = 'All field are compulsory!'
-                this.showPopup=true;
-                console.log(this.message, this.showPopup);
-            }
-            else { this.login(); }
-        },
         async login(){
             try{
                 const res = await fetch('http://localhost:8000/api/login', {
@@ -65,24 +59,36 @@ export default {
                 const data = await res.json() ;
                 if (res.status==400){
                     this.showPopup=true;
+                    this.alert_type='danger';
                     this.message = data.message.error;     // set error message
                 }
                 else { 
                     localStorage.setItem('auth_token', data.auth_token);    // set auth_token
-                    const user = {
-                        'id':data.user_id, 
-                        'role':data.role, 
-                        'email':data.email, 
-                        'name':data.username
+                    // set logged in user data
+                    const user = {              
+                        'id':data.id,
+                        'name':data.username,
+                        'role':data.role,
+                        'email':data.email
                     }
-                    localStorage.setItem('user', user);    // set logged in user data
+                    localStorage.setItem('user', JSON.stringify(user));    
                     this.showPopup=true;
+                    this.alert_type='success';
                     this.message = data.message.success;   // set success message
                 }
             }catch(error){console.log(error);} 
         },
+        loginUser(){
+            if (this.password==''||this.email==''){
+                this.message = 'All field are compulsory!'
+                this.showPopup=true;
+                console.log(this.message, this.showPopup);
+            }
+            else { this.login(); }
+        },
         handelCancel(){
             this.showPopup=false;
+            this.alert_type=null;
             this.$router.go();      // refreshing
         }
     }

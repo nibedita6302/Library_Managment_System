@@ -1,5 +1,6 @@
 <template>
-    <PopupMessage v-if="showPopup" :message="message" @cancel="handelCancel"></PopupMessage>
+    <PopupMessage v-if="showPopup" :message="message" :alert_type="alert_type"
+    @cancel="handelCancel"></PopupMessage>
     
     <div class="container d-flex justify-content-center">
         <form class="h-100" @submit.prevent="loginUser">
@@ -35,7 +36,8 @@ export default {
             email: '',
             password: '',
             message: '',
-            showPopup: false
+            showPopup: false,
+            alert_type: null
         }
     },
     methods: {
@@ -57,6 +59,7 @@ export default {
                 const data = await res.json() ;
                 if (res.status==400){
                     this.showPopup=true;
+                    this.alert_type='danger';
                     this.message = data.message.error;     // set error message
                 }
                 else { 
@@ -70,6 +73,7 @@ export default {
                     }
                     localStorage.setItem('user', JSON.stringify(user));    
                     this.showPopup=true;
+                    this.alert_type='success';
                     this.message = data.message.success;   // set success message
                 }
             }catch(error){console.log(error);} 
@@ -84,6 +88,7 @@ export default {
         },
         handelCancel(){
             this.showPopup=false;
+            this.alert_type=null;
             this.$router.go();      // refreshing
         }
     }

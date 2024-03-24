@@ -37,8 +37,7 @@
             <router-link to='/login' active-class="active" class="nav-link">Login</router-link>
           </li>
           <li class="nav-item">
-            <!-- <LogoutAlert /> -->
-            Logout
+            <LogoutUser />
           </li>
         </ul>
       </div>
@@ -47,6 +46,7 @@
 </template>
 
 <script>
+import LogoutUser from '@/components/LogoutUser.vue'
 
 export default {
   name: 'NavBar',
@@ -54,6 +54,9 @@ export default {
     return {
       user: {},
     }
+  },
+  components:{
+    LogoutUser
   },
   methods:{
     getLoggedInUser(){

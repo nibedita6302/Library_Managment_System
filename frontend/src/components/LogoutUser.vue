@@ -43,6 +43,7 @@ export default{
                     this.message = data.message.success;   // set success message
                     localStorage.removeItem('auth_token');   // remove auth_token
                     localStorage.removeItem('user');  
+                    this.$router.go();  // reload page
                 }
             }catch(error){console.log(error);}
         }

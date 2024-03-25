@@ -1,6 +1,16 @@
 <template>
-    <PopupMessage v-if="showPopup" :message="message" :alert_type="alert_type"
-    @cancel="handelCancel"></PopupMessage>
+    <!-- Modal -->
+    <div class="modal fade" id="loginAlert" tabindex="-1" aria-labelledby="modallabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title" id="modallabel">{{ message }}</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" 
+                    aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    </div>
     
     <div class="container d-flex justify-content-center">
         <form class="h-100" @submit.prevent="loginUser">
@@ -18,26 +28,21 @@
                 </div>
             </div>
             <div class="row mb-3 p-4"></div>
-            <button type="submit" class="btn btn-success" @click="loginUser">Login</button>
+            <button type="submit" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#loginAlert" 
+            @click="loginUser">Login</button>
         </form>
     </div>
 </template>
 
 <script>
-import PopupMessage from './PopupMessage.vue';
-
 export default { 
     name: 'LoginPage',
-    components:{
-        PopupMessage
-    },
     data(){
         return {
             email: '',
             password: '',
             message: '',
-            showPopup: false,
-            alert_type: null
+            showPopup: false
         }
     },
     methods: {
@@ -58,11 +63,10 @@ export default {
                 if (!res.ok && res.status!=400) { throw Error("HTTP Error at Search:"+res.status) }
                 const data = await res.json() ;
                 if (res.status==400){
-                    this.showPopup=true;
-                    this.alert_type='danger';
                     this.message = data.message.error;     // set error message
                 }
                 else { 
+                    this.message = data.message.success;   // set success message
                     localStorage.setItem('auth_token', data.auth_token);    // set auth_token
                     // set logged in user data
                     const user = {              
@@ -71,25 +75,17 @@ export default {
                         'role':data.role,
                         'email':data.email
                     }
-                    localStorage.setItem('user', JSON.stringify(user));    
-                    this.showPopup=true;
-                    this.alert_type='success';
-                    this.message = data.message.success;   // set success message
+                    localStorage.setItem('user', JSON.stringify(user));  
+                    this.$router.go();      // refreshing
                 }
             }catch(error){console.log(error);} 
         },
         loginUser(){
             if (this.password==''||this.email==''){
                 this.message = 'All field are compulsory!'
-                this.showPopup=true;
-                console.log(this.message, this.showPopup);
+                // this.showPopup=true;
             }
             else { this.login(); }
-        },
-        handelCancel(){
-            this.showPopup=false;
-            this.alert_type=null;
-            this.$router.go();      // refreshing
         }
     }
 }

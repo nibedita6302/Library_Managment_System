@@ -47,12 +47,12 @@ class Issue_Book_Request(Resource):
                 return {'message':{
                     'success':'Please wait while your issue is under process',
                     'status': 'PENDING' 
-                }}, 400
+                }}, 200
             if ir.status==0:        ## Issue request rejected
                 return {'message':{
                     'success':'Your issue has been declined, please try again after few days.',
                     'status': 'REJECTED' 
-                }}, 400
+                }}, 200
             
         ir1 = IssueRequest(user_id=current_user.id, b_id = book_id)
         db.session.add(ir1)

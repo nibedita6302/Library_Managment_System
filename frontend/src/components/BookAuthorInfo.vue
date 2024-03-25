@@ -1,10 +1,10 @@
 <template>
     <div class="container p-5">
-        <div class="row g-2">
-            <div class="col-sm-4">
+        <div class="row row-col-2 g-2">
+            <div class="col-sm">
                 <img :src="bImage" :alt="book.b_name"/>
             </div>
-            <div class="col-sm-8">
+            <div class="col-sm">
                 <h1>{{ book.b_name }}</h1>
                 <button class="btn btn-warning" @click="IssueBookRequest">
                     <i class="bi bi-bookmark-star"></i>
@@ -63,13 +63,14 @@ export default{
     props: ['book_id'],
     data(){
         return {
-            error: '',
+            message: '',
             book: {},
             author: {},
             reviews: [],
             bImage: '',
             rating: 0,
-            review: ''
+            review: '',
+            dis: true
         }
     },
     methods:{
@@ -106,15 +107,12 @@ export default{
                 const res = await fetch("http://localhost:8000/api/author/"+this.book.a_id, {
                     method: 'GET',
                     mode: 'cors',
-                    credentials: 'include',
-                    headers: {
-                        'Content-Type':'application/json',
-                    }
+                    credentials: 'include'
                 })
                 if (!res.ok && res.status!=404) { throw Error("HTTP Error at Search:"+res.status) }
                 const data = await res.json() ;
                 if (res.status==404){
-                    this.error = data['message']['error'];  // set error
+                    this.error = data.message.error;  // set error
                     this.author = null;               // reset output
                 }
                 else { 
@@ -124,7 +122,32 @@ export default{
             }catch(error){console.log(error);} 
         },
         async IssueBookRequest(){
+            const user = JSON.parse(localStorage.getItem('user'))
+            if (user && user.role==2){
+                const token = localStorage.getItem('auth_token')
+                    try{
+                        const res = await fetch("http://localhost:8000/api/issue-requests/new/"+this.book.b_id, {
+                            method: 'POST',
+                            mode: 'cors',
+                            credentials: 'include',
+                            headers: {
+                                'Content-Type':'application/json',
+                                'Authorization': `${token}`
+                            }
+                        })
+                        if (!res.ok && res.status!=400) { throw Error("HTTP Error at Search:"+res.status) }
+                        const data = await res.json() ;
+                        if (res.status==400){
+                            this.error = data.message.error;  // set error
+                            console.log(this.error);
+                        }
+                        else { 
+                            this.message = data.message.success;
+                            console.log(this.message);
+                        }
+                    }catch(error){console.log(error);} 
 
+            }else{this.message='You must be logged-in as User to issue books'}
         },
         async submitReview(){
 

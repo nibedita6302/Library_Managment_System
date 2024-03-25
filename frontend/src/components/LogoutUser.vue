@@ -6,7 +6,7 @@
                 <div class="modal-header">
                     <p class="modal-title" id="modallabel">{{ message }}</p>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" 
-                    aria-label="Close"></button>
+                    aria-label="Close" @click="handleClose"></button>
                 </div>
             </div>
         </div>
@@ -38,14 +38,18 @@ export default{
                 const data = await res.json() ;
                 if (res.status==400){
                     this.message = data.message.error;     // remove error message
+                    localStorage.removeItem('auth_token');   // remove auth_token
+                    localStorage.removeItem('user');         // remove user
                 }
                 else { 
-                    this.message = data.message.success;   // set success message
+                    this.message = data.message.success;     // set success message
                     localStorage.removeItem('auth_token');   // remove auth_token
-                    localStorage.removeItem('user');  
-                    this.$router.go();  // reload page
+                    localStorage.removeItem('user');         // remove user
                 }
             }catch(error){console.log(error);}
+        },
+        handleClose(){
+            this.$router.go();  // reload page
         }
     }
 }

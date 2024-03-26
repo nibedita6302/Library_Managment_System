@@ -5,7 +5,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <p class="modal-title" id="modallabel">
-                        <i class="bi bi-exclamation-triangle-fill" style="color:orange;"></i>
+                        <!-- <i class="bi bi-exclamation-triangle-fill" style="color:orange;"></i> -->
                         {{ message }}
                     </p>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" 
@@ -87,18 +87,17 @@
                     aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form @submit.prevent="submitReview">
+                    <form @submit.prevent="validateReview">
                         <div class="mb-3">
                             <label for="rating" class="col-form-label">Rating:</label>
-                            <input type="number" step="1" max="5" min="1" class="form-control" 
-                            id="rating" v-model="rating">
+                            <input type="number" class="form-control" id="rating" v-model="rating"
+                            step="1" max="5" min="1">
                         </div>
                         <div class="mb-3">
                             <label for="review" class="col-form-label">Review:</label>
                             <textarea class="form-control" id="review" v-model="review"></textarea>
                         </div>
-                        <button class="btn btn-outline-success" @click="submitReview"
-                        data-bs-dismiss="modal" aria-label="Close" 
+                        <button class="btn btn-outline-success" data-bs-dismiss="modal" aria-label="Close" 
                         data-bs-toggle="modal" data-bs-target="#info1">
                             Submit
                         </button>
@@ -124,7 +123,7 @@ export default{
             author: {},
             reviews: [],
             bImage: '',
-            rating: 0,
+            rating: 1,
             review: ''
         }
     },
@@ -143,7 +142,7 @@ export default{
                         'Content-Type':'application/json',
                     }
                 })
-                if (!res.ok && res.status!=404) { throw Error("HTTP Error at Search:"+res.status) }
+                if (!res.ok && res.status!=404) { throw Error("HTTP Error at get book by ID:"+res.status) }
                 const data = await res.json() ;
                 if (res.status==404){
                     this.message = data.message.error;  // set error
@@ -163,7 +162,7 @@ export default{
                     mode: 'cors',
                     credentials: 'include'
                 })
-                if (!res.ok && res.status!=404) { throw Error("HTTP Error at Search:"+res.status) }
+                if (!res.ok && res.status!=404) { throw Error("HTTP Error at get author:"+res.status) }
                 const data = await res.json() ;
                 if (res.status==404){
                     this.message = data.message.error;  // set error
@@ -186,10 +185,9 @@ export default{
                         headers: {
                             'Content-Type':'application/json',
                             'Authorization': `${token}`
-                        },
-                        body: JSON.stringify({'rating':this.rating, 'review':this.review})
+                        }
                     })
-                    if (!res.ok && res.status!=400) { throw Error("HTTP Error at Search:"+res.status) }
+                    if (!res.ok && res.status!=400) { throw Error("HTTP Error at issue book:"+res.status) }
                     const data = await res.json() ;
                     if (res.status==400){
                         this.message = data.message.error;  // set error
@@ -201,6 +199,12 @@ export default{
                     }
                 }catch(error){console.log(error);} 
             }else{this.message='You must be logged-in as User to issue books'}
+        },
+        async validateReview(){
+            if (this.rating<1 || this.rating>5 || this.review==''){
+                console.log('here'+this.review+'review')
+                this.message = 'Invalid Input!'
+            }else{ await this.submitReview();}
         },
         async submitReview(){
             const user = JSON.parse(localStorage.getItem('user'))
@@ -214,16 +218,21 @@ export default{
                         headers: {
                             'Content-Type':'application/json',
                             'Authorization': `${token}`
-                        }
+                        },
+                        body: JSON.stringify({'rating':this.rating, 'review':this.review})
                     })
-                    if (!res.ok && (res.status!=400 || res.status!=403)) { 
-                        throw Error("HTTP Error at Search:"+res.status) 
+                    if (!res.ok && (res.status!=400 && res.status!=403)) { 
+                        throw Error("HTTP Error at submitReview:"+res.status) 
                     }
                     const data = await res.json() ;
                     if (res.status==400 || res.status==403){
+                        console.log('error '+data.message.error)
                         this.message = data.message.error;  // set error
                     }
-                    else { this.message = data.message.success; }
+                    else { 
+                        console.log('success '+data.message.success)
+                        this.message = data.message.success; 
+                    }
                 }catch(error){console.log(error);} 
             }else{this.message='You must be logged-in as User to issue books'}
         }
@@ -233,7 +242,6 @@ export default{
         this.getImage();
         if (this.book!=null){
             await this.fetchAuthorDetails();
-            // console.log('complete2')
         }
     }
 }
@@ -243,5 +251,8 @@ export default{
 img{
     min-height: 500px;
     max-height: 500px;
+}
+form{
+    border: 0px;
 }
 </style>

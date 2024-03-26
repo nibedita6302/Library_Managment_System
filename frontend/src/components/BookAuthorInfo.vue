@@ -191,20 +191,16 @@ export default{
                     const data = await res.json() ;
                     if (res.status==400){
                         this.message = data.message.error;  // set error
-                        // console.log(this.error);
                     }
-                    else { 
-                        this.message = data.message.success;
-                        // console.log(this.message);
-                    }
+                    else { this.message = data.message.success; }
                 }catch(error){console.log(error);} 
             }else{this.message='You must be logged-in as User to issue books'}
         },
-        async validateReview(){
+        validateReview(){
             if (this.rating<1 || this.rating>5 || this.review==''){
                 console.log('here'+this.review+'review')
-                this.message = 'Invalid Input!'
-            }else{ await this.submitReview();}
+                this.message = 'Invalid Rating or Empty Review!'
+            }else{ this.submitReview();}
         },
         async submitReview(){
             const user = JSON.parse(localStorage.getItem('user'))
@@ -226,13 +222,9 @@ export default{
                     }
                     const data = await res.json() ;
                     if (res.status==400 || res.status==403){
-                        console.log('error '+data.message.error)
                         this.message = data.message.error;  // set error
                     }
-                    else { 
-                        console.log('success '+data.message.success)
-                        this.message = data.message.success; 
-                    }
+                    else { this.message = data.message.success; }
                 }catch(error){console.log(error);} 
             }else{this.message='You must be logged-in as User to issue books'}
         }

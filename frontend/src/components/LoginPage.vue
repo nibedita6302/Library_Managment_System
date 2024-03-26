@@ -78,7 +78,7 @@ export default {
                     localStorage.setItem('auth_token', data.auth_token);    // set auth_token
                     // set logged in user data
                     const user = {              
-                        'id':data.id,
+                        'user_id':data.user_id,
                         'name':data.username,
                         'role':data.role,
                         'email':data.email

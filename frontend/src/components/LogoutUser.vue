@@ -49,7 +49,7 @@ export default{
             }catch(error){console.log(error);}
         },
         handleClose(){
-            this.$router.go();  // reload page
+            this.$router.go('/login');  // reload page
         }
     }
 }

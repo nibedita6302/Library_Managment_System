@@ -4,7 +4,7 @@ from .authors import AuthorManagement
 from .books import ManageBook, Books_in_Section, Download_Book, Read_Book
 from .reviews import UserReview
 from .search import SearchBooks
-from .user_book_activity import Issue_Book_Request, UserStats
+from .user_book_activity import Issue_Book_Request, PendingIssues, UserStats
 from .librarian import LibrarianAnalytics, Issue_Request_Approval
 
 def config_all_resource(api):
@@ -45,8 +45,9 @@ def search_api(api):
     api.add_resource(SearchBooks, '/search')
 
 def user_activity_api(api):
-    api.add_resource(Issue_Book_Request, '/issue-requests', '/issue-requests/new/<int:book_id>',
+    api.add_resource(Issue_Book_Request, '/current-issues', '/issue-requests/new/<int:book_id>',
                       '/issue-requests/return/<int:issue_id>', '/test/<int:issue_id>')
+    api.add_resource(PendingIssues, '/pending-issues')
     api.add_resource(UserStats, '/user-stats')
 
 def librarian_stats_api(api):

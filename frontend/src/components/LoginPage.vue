@@ -4,7 +4,12 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <p class="modal-title" id="modallabel">{{ message }}</p>
+                    <p class="modal-title" id="modallabel">
+                        <i v-if="error==0" class="bi bi-check-circle-fill" style="color: green;"></i>
+                        <i v-else class="bi bi-x-circle-fill" style="color: red;"></i>
+                        &nbsp;
+                        {{ message }}
+                    </p>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" 
                     aria-label="Close"></button>
                 </div>
@@ -42,7 +47,8 @@ export default {
             email: '',
             password: '',
             message: '',
-            showPopup: false
+            showPopup: false,
+            error: 1
         }
     },
     methods: {
@@ -64,13 +70,15 @@ export default {
                 const data = await res.json() ;
                 if (res.status==400){
                     this.message = data.message.error;     // set error message
+                    this.error=1;
                 }
                 else { 
                     this.message = data.message.success;   // set success message
+                    this.error=0;
                     localStorage.setItem('auth_token', data.auth_token);    // set auth_token
                     // set logged in user data
                     const user = {              
-                        'id':data.id,
+                        'user_id':data.user_id,
                         'name':data.username,
                         'role':data.role,
                         'email':data.email
@@ -83,6 +91,7 @@ export default {
         loginUser(){
             if (this.password==''||this.email==''){
                 this.message = 'All field are compulsory!'
+                this.error=1;
                 // this.showPopup=true;
             }
             else { this.login(); }

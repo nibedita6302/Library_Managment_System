@@ -23,15 +23,24 @@ current_issue_fields = {
 
 class Issue_Book_Request(Resource):
     @auth_required('token')
-    @roles_required('user')
-    def get(self):                             
-         ## Get current book issues
-        issues = db.session.query(UserBook.issue_id, UserBook.b_id, UserBook.issue_date, UserBook.due_date,
+    def get(self):                      ## Get current book issues
+        if 'librarian' in current_user.roles:
+            ## All current issues
+            issues = db.session.query(UserBook.issue_id, UserBook.b_id, UserBook.issue_date, UserBook.due_date,
                                   Books.b_name, Sections.s_name, Author.a_name)\
                             .join(Books, UserBook.b_id==Books.b_id)\
                             .join(Sections, Books.s_id==Sections.s_id)\
                             .join(Author, Books.a_id==Author.a_id)\
-                            .filter(UserBook.user_id==current_user.id).all()
+                            .filter(UserBook.return_date==None).all()
+        else:
+            ## Current issue for User-ID
+            issues = db.session.query(UserBook.issue_id, UserBook.b_id, UserBook.issue_date, UserBook.due_date,
+                                  Books.b_name, Sections.s_name, Author.a_name)\
+                            .join(Books, UserBook.b_id==Books.b_id)\
+                            .join(Sections, Books.s_id==Sections.s_id)\
+                            .join(Author, Books.a_id==Author.a_id)\
+                            .filter(UserBook.user_id==current_user.id, UserBook.return_date==None).all()
+            
         return marshal(issues, current_issue_fields), 200
 
     @auth_required('token')
@@ -69,7 +78,7 @@ class Issue_Book_Request(Resource):
 
     @auth_required('token')
     @roles_required('user')
-    def put(self, issue_id):         ## Return book 
+    def put(self, issue_id):                        ## Return book 
         user_book = UserBook.query.get(issue_id)
         book = Books.query.get(user_book.b_id)
         user_actv = UserActivity.query.filter_by(user_id=current_user.id, book_name=book.b_name,

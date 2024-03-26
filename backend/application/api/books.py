@@ -176,7 +176,7 @@ class Download_Book(Resource):
             return {'message': {'error': 'The book has been returned!'}}, 400
         book = Books.query.get(user_book.b_id)
 
-        result = download_pdf.delay(book.content_link_download)
+        result = download_pdf.delay(book.content_link_download)     ## Asynchronous Download
         pdf_file = result.get()
         if result.status!='SUCCESS':
             return {'message': {'error': 'Download unsuccessful'}}, 400

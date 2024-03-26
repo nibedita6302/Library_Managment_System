@@ -23,7 +23,6 @@ book_field = {
     "date_published": fields.DateTime,
     "publisher": fields.String,
     "summary": fields.String,
-    # "content_link_view": fields.String,
     "total_issue": fields.Integer,
     "total_bought": fields. Integer
 }
@@ -60,7 +59,7 @@ class ManageBook(Resource):
         if len(formData)==9:
             if (not Sections.query.get(formData['s_id'])) or (not Author.query.get(formData['a_id'])):
                 return {'message': {'error': 'Section or Author Not Found'}}, 404   
-            ## Convert Date form String to DateTime type
+            ## Convert Date from String to DateTime type
             formData['date_published'] = datetime.strptime(formData['date_published'], "%d/%m/%Y")
             ## PDF price > 0
             if int(formData['pdf_price'])<=0:
@@ -164,7 +163,7 @@ class Books_in_Section(Resource):
         books = Books.query.filter_by(s_id=section_id).all()
         return marshal(books, book_field), 200
 
-## API for downloading books
+## API for downloading books/ buying books
 class Download_Book(Resource):
     @auth_required('token')
     @roles_required('user')

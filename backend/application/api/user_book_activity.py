@@ -8,23 +8,30 @@ from flask_login import current_user
 from flask_security import auth_required, roles_required
 
 from application.models.user_book_activity import UserBook, UserActivity, IssueRequest
-from application.models.books import Books
+from application.models.books import Books, Sections, Author
 from utils.analytics import *
 
-issue_req_field = {
-    'user_id': fields.Integer,
+current_issue_fields = {
+    'issue_id': fields.Integer,
     'b_id': fields.Integer,
-    'status': fields.Integer,
+    'b_name': fields.String,
+    's_name': fields.String,
+    'a_name': fields.String,
+    'issue_date': fields.DateTime,
+    'due_date': fields.DateTime,
 }
 
 class Issue_Book_Request(Resource):
     @auth_required('token')
-    def get(self):                  ## Get all book issues
-        if 'librarian' in current_user.roles:
-            ir1 = IssueRequest.query.all()      ## Return all requests to Librarian
-        else:
-            ir1 = IssueRequest.query.filter_by(user_id=current_user.id).all()   ## Return only user's requests
-        return marshal(ir1, issue_req_field), 200
+    @roles_required('user')
+    def get(self):                             
+         ## Get current book issues
+        issues = db.session.query(UserBook.issue_id, UserBook.b_id, UserBook.issue_date, UserBook.due_date,
+                                  Books.b_name, Sections.s_name, Author.a_name)\
+                            .join(Books, UserBook.b_id==Books.b_id)\
+                            .join(Sections, Books.s_id==Sections.s_id)\
+                            .join(Author, Books.a_id==Author.a_id).all()
+        return marshal(issues, current_issue_fields), 200
 
     @auth_required('token')
     @roles_required('user')
@@ -76,6 +83,23 @@ class Issue_Book_Request(Resource):
         db.session.commit()
         return {'message':{'success':'Book returned successfully'}}, 200
 
+issue_req_field = {
+    'user_id': fields.Integer,
+    'b_id': fields.Integer,
+    'status': fields.Integer,
+}
+
+class PendingIssues(Resource):
+    @auth_required('token')
+    def get(self):                                               ## Get pending book issues
+        if 'librarian' in current_user.roles:
+            ir1 = IssueRequest.query.filter_by(status=2).all()   ## Return all pending requests 
+        else:
+            ## Return only user's pending requests
+            ir1 = IssueRequest.query.filter_by(user_id=current_user.id, status=2).all()  
+        return marshal(ir1, issue_req_field), 200
+
+
 section_count_field = {
     'section_name': fields.String,
     'count': fields.Integer
@@ -88,7 +112,7 @@ fav_author_field = {
 
 ranking_field = {
     'name': fields.String,
-    'count': fields.Integer
+    'issue_count': fields.Integer
 }
 
 class UserStats(Resource):
@@ -99,13 +123,13 @@ class UserStats(Resource):
         section_count = section_distribution_user(current_user.id)
         
         ## Favourite Author
-        fav_author = fav_author(current_user.id)
+        author = fav_author(current_user.id)
         
         ## Ranking in different book reads (top 3 & current user rank)
         ranking = user_ranking()
         
         return {
             'section_distribution': marshal(section_count, section_count_field),
-            'favourite_author': marshal(fav_author, fav_author_field),
+            'favourite_author': marshal(author, fav_author_field),
             'ranking': marshal(ranking, ranking_field)
         }, 200

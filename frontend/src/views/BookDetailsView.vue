@@ -1,5 +1,7 @@
 <template>
-    <BookAuthorInfo :book_id="book_id"></BookAuthorInfo>
+    <div class="container p-5">
+        <BookAuthorInfo :book_id="book_id"></BookAuthorInfo>
+    </div>
 </template>
 
 <script>

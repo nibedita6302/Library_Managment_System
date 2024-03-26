@@ -17,12 +17,14 @@ class UserReview(Resource):
         if not UserBook.query.filter_by(user_id = current_user.id, b_id=book_id, return_date=None).first():
             return {'message': {'error': 'Please Issue book to write review'}}, 403   
         jsonData = request.get_json()
-        if len(jsonData)!=2:
+        if len(jsonData)!=2 or jsonData['review']=='':
             return {'message': {'error': 'All fields are compulsory.'}}, 400
         if Reviews.query.filter_by(user_id=current_user.id, b_id=book_id).first():
             return {'message': {'error': 'Your review already exists'}}, 400
-        review = Reviews(**jsonData, user_id=current_user.id, b_id=book_id)
-        # book.reviews = [review]     ## Add to relationship
+        if 1<=jsonData['rating']<=5 :
+            review = Reviews(**jsonData, user_id=current_user.id, b_id=book_id)
+        else:
+            return {'message': {'error': 'Rating must be inbetween 1 and 5'}}, 400
         db.session.add(review)
         db.session.commit()
         return {'message': {'success': 'Added review successfully'}}, 200

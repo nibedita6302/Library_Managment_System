@@ -30,7 +30,8 @@ class Issue_Book_Request(Resource):
                                   Books.b_name, Sections.s_name, Author.a_name)\
                             .join(Books, UserBook.b_id==Books.b_id)\
                             .join(Sections, Books.s_id==Sections.s_id)\
-                            .join(Author, Books.a_id==Author.a_id).all()
+                            .join(Author, Books.a_id==Author.a_id)\
+                            .filter(UserBook.user_id==current_user.id).all()
         return marshal(issues, current_issue_fields), 200
 
     @auth_required('token')
@@ -86,18 +87,32 @@ class Issue_Book_Request(Resource):
 issue_req_field = {
     'user_id': fields.Integer,
     'b_id': fields.Integer,
-    'status': fields.Integer,
+    'b_name': fields.String,
+    's_name': fields.String,
+    'a_name': fields.String,
 }
 
 class PendingIssues(Resource):
     @auth_required('token')
     def get(self):                                               ## Get pending book issues
         if 'librarian' in current_user.roles:
-            ir1 = IssueRequest.query.filter_by(status=2).all()   ## Return all pending requests 
+            ## Return all pending requests 
+            pending_req = db.session.query(IssueRequest.user_id, IssueRequest.b_id, 
+                                   Books.b_name, Sections.s_name, Author.a_name)\
+                            .join(Books, IssueRequest.b_id==Books.b_id)\
+                            .join(Sections, Books.s_id==Sections.s_id)\
+                            .join(Author, Books.a_id==Author.a_id)\
+                            .filter(IssueRequest.status==2).all()  
         else:
             ## Return only user's pending requests
-            ir1 = IssueRequest.query.filter_by(user_id=current_user.id, status=2).all()  
-        return marshal(ir1, issue_req_field), 200
+            pending_req = db.session.query(IssueRequest.user_id, IssueRequest.b_id,
+                                   Books.b_name, Sections.s_name, Author.a_name)\
+                            .join(Books, IssueRequest.b_id==Books.b_id)\
+                            .join(Sections, Books.s_id==Sections.s_id)\
+                            .join(Author, Books.a_id==Author.a_id)\
+                            .filter(IssueRequest.user_id==current_user.id, IssueRequest.status==2).all() 
+            
+        return marshal(pending_req, issue_req_field), 200
 
 
 section_count_field = {

@@ -1,4 +1,5 @@
 import os
+import requests
 from datetime import datetime
 from flask import send_file
 from flask_restful import Resource, fields, marshal
@@ -174,12 +175,9 @@ class Download_Book(Resource):
             return {'message': {'error': 'Please Issue book to be able to download'}}, 403
         if user_book.return_date is not None:
             return {'message': {'error': 'The book has been returned!'}}, 400
+        
         book = Books.query.get(user_book.b_id)
-
-        result = download_pdf.delay(book.content_link_download)     ## Asynchronous Download
-        pdf_file = result.get()
-        if result.status!='SUCCESS':
-            return {'message': {'error': 'Download unsuccessful'}}, 400
+        url = book.content_link_download
 
         user_actv = UserActivity.query.get(issue_id)
         if book.total_bought is None:
@@ -194,8 +192,16 @@ class Download_Book(Resource):
 
         db.session.commit()
 
-        ## Send file as attachement to be downloaded
-        return send_file(pdf_file, as_attachment=True, download_name=book.b_name+'.pdf')
+        response = requests.get(url)         ## Request for PDF from url
+        if response.status_code == 200:
+            # if 'application/pdf' in content_type:                ## Check if the response contains a PDF
+            with open('temp.pdf', 'wb') as f:                ## Save the PDF to a temporary file
+                f.write(response.content)
+
+            return send_file('temp.pdf', as_attachment=True, download_name=f'{book.b_name}.pdf')
+        return {"message":{'error':f'Unable to download PDF, error status {response.status_code}'}}, 500
+
+
     
 ## API for only reading books
 class Read_Book(Resource):

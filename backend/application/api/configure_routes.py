@@ -53,4 +53,4 @@ def user_activity_api(api):
 def librarian_stats_api(api):
     api.add_resource(LibrarianAnalytics, '/librarian-stats')
     api.add_resource(Issue_Request_Approval, '/issue-requests/approval/<int:book_id>/<int:user_id>',
-                     '/issue-requests/revoke/<int:issue_id>/<int:confirm>')
+                     '/issue-requests/revoke/<int:issue_id>')

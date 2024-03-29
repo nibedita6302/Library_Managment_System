@@ -1,12 +1,29 @@
 <template>
     <div class="container p-4">
+        <div class="d-flex justify-content-center">
+            <button class="btn btn-success">
+                <i class="bi bi-shield-fill-plus"></i>
+                Add New Section
+            </button> &nbsp;
+            <button class="btn btn-success">
+                <i class="bi bi-patch-plus-fill"></i>
+                Add New Author
+            </button>
+        </div>
+        <hr>
         <div class="row row-col-3 g-0">
             <div class="col-sm-4 card text-white me-3" v-for="s in sections" :key="s.s_id">
-                <img :src="require('@/assets/upload/'+s.s_image)" class="card-img" :alt="s.s_name">
-                <div class="card-img-overlay">
-                    <h3 class="card-title">{{s.s_name}}</h3>
-                    <b class="card-text">Book Count: {{ s.book_count }}</b>
-                    <router-link :to="'/section/'+s.s_id+'/books'" class="stretched-link"></router-link>
+                <div style="transform: rotate(0);">
+                    <img :src="require('@/assets/upload/'+s.s_image)" class="card-img" :alt="s.s_name">
+                    <div class="card-img-overlay">
+                        <h3 class="card-title">{{s.s_name}}</h3>
+                        <b class="card-text">Book Count: {{ s.book_count }}</b>
+                        <router-link :to="'/section/'+s.s_id+'/books'" class="stretched-link"></router-link>
+                    </div>
+                </div>
+                <div class="btn-group" role="group" aria-label="section">
+                    <button type="button" class="btn btn-warning" @click.prevent="updateSection">Update</button>
+                    <button type="button" class="btn btn-danger" @click.prevent="deleteSection">Delete</button>
                 </div>
             </div>
         </div>
@@ -19,7 +36,8 @@ export default{
     name: 'SectionDisplay',
     data(){
         return{
-            sections: []
+            sections: [],
+            user: JSON.parse(localStorage.getItem('user'))
         }
     },
     methods:{
@@ -34,6 +52,11 @@ export default{
                 const data = await res.json() ;
                 this.sections = data;  // set output
             }catch(error){console.log(error);} 
+        }, 
+        async updateSection(){
+            
+        },
+        async deleteSection(){
         }
     },
     created(){
@@ -43,4 +66,10 @@ export default{
 </script>
 
 <style scoped>
+img{
+    min-height: 150px;
+}
+i{
+    font-size: x-large
+}
 </style>

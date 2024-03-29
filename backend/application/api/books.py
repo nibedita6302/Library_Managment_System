@@ -208,8 +208,6 @@ class Download_Book(Resource):
             return send_file('static/temp.pdf', as_attachment=True, download_name=f'{book.b_name}.pdf')
         return {"message":{'error':f'Unable to download PDF, error status {response.status_code}'}}, 500
 
-
-    
 ## API for only reading books
 class Read_Book(Resource):
     @auth_required('token')

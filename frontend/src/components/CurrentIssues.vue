@@ -56,7 +56,7 @@
                                     Read
                                 </button>
                                 <!-- Read Book -->
-                                <button type="button" class="btn btn-success" @click="BuyBook(issue.issue_id)"
+                                <button type="button" class="btn btn-success" @click="BuyBook(issue.issue_id, issue.b_name)"
                                 data-bs-toggle="modal" data-bs-target="#alert2" >
                                     <i class="bi bi-file-earmark-arrow-down-fill"></i>
                                     Download
@@ -104,7 +104,7 @@ export default{
                         'Authorization': `${this.token}`,
                     }
                 })
-                if (!res.ok) { throw Error("HTTP Error at get author:"+res.status) }
+                if (!res.ok) { throw Error("HTTP Error at get fetch current issues:"+res.status) }
                 const data = await res.json() ;
                 this.current_issues = data;  // set output
             }catch(error){console.log(error);} 
@@ -120,7 +120,7 @@ export default{
                     }
                 })
                 if (!res.ok && res.status!=400 && res.status!=403) { 
-                    throw Error("HTTP Error at get author:"+res.status) 
+                    throw Error("HTTP Error at get read book:"+res.status) 
                 }
                 const data = await res.json() ;
                 if ('content_link_view' in data){
@@ -130,9 +130,9 @@ export default{
                 }
             }catch(error){console.log(error);} 
         },
-        async BuyBook(issue_id){        // NOT WORKING
+        async BuyBook(issue_id, b_name){       
             try{
-                const res = await fetch("http://localhost:8000/api/book/read/"+issue_id, {
+                const res = await fetch("http://localhost:8000/api/book/buy/"+issue_id, {
                     method: 'GET',
                     mode: 'cors',
                     credentials: 'include',
@@ -140,14 +140,23 @@ export default{
                         'Authorization': `${this.token}`,
                     }
                 })
-                if (!res.ok && res.status!=400 && res.status!=403) { 
-                    throw Error("HTTP Error at get author:"+res.status) 
-                }
-                const data = await res.json() ;
-                if ('content_link_view' in data){
-                    console.log('download')
+                if (res.status==200){
+                    console.log('in')
+                    // Create a Blob object from the response data
+                    const blob = await res.blob();
+                    const url = window.URL.createObjectURL(blob);   // Create a temporary URL for the blob
+                    const link = document.createElement('a');       
+                    link.href = url;
+                    link.download = b_name+'.pdf';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    window.URL.revokeObjectURL(url);
                 }else{
-                    this.message = data.message.error
+                    console.log('out')
+                    const data = await res.json();
+                    if ("message" in data) {this.message = data.message.error}
+                    else {throw Error("HTTP Error at get buy book:"+res.status);}
                 }
             }catch(error){console.log(error);} 
 
@@ -162,7 +171,7 @@ export default{
                         'Authorization': `${this.token}`,
                     }
                 })
-                if (!res.ok && res.status!=400) { throw Error("HTTP Error at get author:"+res.status)}
+                if (!res.ok && res.status!=400) { throw Error("HTTP Error at get return book:"+res.status)}
                 const data = await res.json() ;
                 if (res.status==400){
                     this.message = data.message.error;

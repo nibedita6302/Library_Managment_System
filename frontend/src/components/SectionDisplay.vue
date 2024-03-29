@@ -1,5 +1,16 @@
 <template>
     <div class="container p-4">
+        <div class="d-flex justify-content-center">
+            <button class="btn btn-success">
+                <i class="bi bi-shield-fill-plus"></i>
+                Add New Section
+            </button> &nbsp;
+            <button class="btn btn-success">
+                <i class="bi bi-patch-plus-fill"></i>
+                Add New Author
+            </button>
+        </div>
+        <hr>
         <div class="row row-col-3 g-0">
             <div class="col-sm-4 card text-white me-3" v-for="s in sections" :key="s.s_id">
                 <div style="transform: rotate(0);">
@@ -10,8 +21,8 @@
                         <router-link :to="'/section/'+s.s_id+'/books'" class="stretched-link"></router-link>
                     </div>
                 </div>
-                <div class="btn-group" role="group" aria-label="Basic example">
-                    <button type="button" class="btn btn-warning" @click.prevent="updateSection($event)">Update</button>
+                <div class="btn-group" role="group" aria-label="section">
+                    <button type="button" class="btn btn-warning" @click.prevent="updateSection">Update</button>
                     <button type="button" class="btn btn-danger" @click.prevent="deleteSection">Delete</button>
                 </div>
             </div>
@@ -42,7 +53,7 @@ export default{
                 this.sections = data;  // set output
             }catch(error){console.log(error);} 
         }, 
-        async updateSection(event){
+        async updateSection(){
             
         },
         async deleteSection(){
@@ -57,5 +68,8 @@ export default{
 <style scoped>
 img{
     min-height: 150px;
+}
+i{
+    font-size: x-large
 }
 </style>

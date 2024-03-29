@@ -101,7 +101,7 @@ export default{
                 if (!res.ok && res.status!=400) { throw Error("HTTP Error at pending issue:"+res.status) }
                 const data = await res.json() ;
                 if (res.status==400){
-                    this.error = data.message.error;  // set error
+                    this.message = data.message.error;  // set error
                 }else{
                     this.message = data.message.success;
                 }

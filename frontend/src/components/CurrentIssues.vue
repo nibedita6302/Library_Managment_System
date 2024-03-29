@@ -214,6 +214,25 @@ export default{
                     this.message = data.message.success;
                 }
             }catch(error){console.log(error);} 
+        },
+        async revokeIssue(issue_id){
+            try{
+                const res = await fetch("http://localhost:8000/api/issue-requests/revoke/"+issue_id, {
+                    method: 'POST',
+                    mode: 'cors',
+                    credentials: 'include',
+                    headers:{
+                        'Authorization': `${this.token}`,
+                    }
+                })
+                if (!res.ok && res.status!=400) { throw Error("HTTP Error at get return book:"+res.status)}
+                const data = await res.json() ;
+                if (res.status==400){
+                    this.message = data.message.error;
+                }else{
+                    this.message = data.message.success;
+                }
+            }catch(error){console.log(error);} 
         }
     },
     created(){

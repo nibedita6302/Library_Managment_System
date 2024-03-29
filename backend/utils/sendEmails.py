@@ -6,10 +6,10 @@ from email import encoders
 from email.mime.multipart import MIMEMultipart
 
 from .createPDF import create_pdf
-from application.models.users import Users
+from application.models.users import Users 
 from .credentials import get_email_credential
 
-def sendEmail(user_id, email_type='reminder'):
+def sendEmail(user_id, email_type='reminder', message=None):
     ## Email account details
     sender_email, app_password = get_email_credential()
     user = Users.query.get(user_id)     ## Get recievers details
@@ -19,20 +19,36 @@ def sendEmail(user_id, email_type='reminder'):
         subject = "Library Reminder"
         body = f'''
         Dear {user.name}, 
-        We see that you have not visited the Online Library.
+        We see that you have not visited the Dgital Library today.
         Please visit and have a look at you favourite books and authors under MyBooks.
 
         Thank you
-        Regards 
+        Warm Regards 
         Librarian
         '''
+    elif email_type=='info' and message is not None:
+        print('in info')
+        subject = "Library Book Issue Status"
+        body = f'''
+        Dear {user.name}, 
+        This email is to inform you about your book status as follows:
+        {message}
+
+        Thank you
+        Warm Regards 
+        Librarian
+        '''
+    elif email_type=='info' and message is None:
+        print('exception info')
+        raise TypeError('Cannot send Email of email_type "info" with None message')
     else:
         month = datetime.now().strftime('%B')
         subject = f"Digital Library - Monthly User Activity Report - {month}"
         body = f'''
         The wait is over! 
         Your Monthly activity report for {month} is at last here. Check it out Now!
-        Regards
+
+        Warm Regards
         Librarian
         '''
     message = MIMEMultipart()                   ## Create the MIME object

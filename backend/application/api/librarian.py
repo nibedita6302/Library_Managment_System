@@ -9,6 +9,7 @@ from flask_security import auth_required, roles_required
 from application.models.books import Sections, Books
 from application.models.user_book_activity import UserActivity, IssueRequest, UserBook
 from application.models.users import Users
+from application.jobs.Tasks.bookIssueStatusEmail import *
 
 
 section_read_field = {
@@ -58,6 +59,8 @@ class Issue_Request_Approval(Resource):
     def put(self, book_id, user_id):                    ## Accept / Reject request
         jsonData = request.get_json()
         ir1 = IssueRequest.query.filter_by(b_id=book_id, user_id=user_id).first()
+        book = Books.query.get(book_id)
+
         if ('approval' in jsonData) and (ir1 is not None):
             if ir1.status!=2:
                 return {'message':{'error':'The issue had been already Accepted or Rejected'}}, 400
@@ -68,7 +71,6 @@ class Issue_Request_Approval(Resource):
                 user_book = UserBook(b_id=book_id, user_id=user_id) 
                 db.session.add(user_book)
 
-                book = Books.query.get(book_id)
                 if book.total_issue is not None:
                     book.total_issue+=1                 ## Increment Total Issues in Book
                 else:
@@ -84,16 +86,17 @@ class Issue_Request_Approval(Resource):
                 db.session.commit()
 
                 ## Send mail to User - Celery
-                ## Delete IssueRequest if not PENDING - Celery (Once a day)
-
+                issue_approval_email.delay(user_id, book.b_name, "APPROVED")
                 return {'message':{'success':'Issue Request has been Accepted'}}, 200
+            
             elif jsonData['approval']==0:
                 ir1.status = jsonData['approval']
                 db.session.commit()
                 
                 ## Send mail to User - Celery
-
+                issue_approval_email.delay(user_id, book.b_name, "DECLINED")
                 return {'message':{'success':'Issue Request has been Rejected'}}, 200
+            
             else:
                 return {'message':{'error':'Invalid approval code'}}, 400
         return {'message':{'error':'Bad Request or Issue does not exists'}}, 400
@@ -112,6 +115,7 @@ class Issue_Request_Approval(Resource):
                 db.session.commit()
 
                 ## Send email to user
+                revoke_issue_email.delay(user_book.user_id, user_book.b_id)
 
                 return {'message':{'success':'Revoke successfull with 1 day warning'}}, 200
             return {'message':{'error':'Book already Revoked or Issue does not exists'}}, 400

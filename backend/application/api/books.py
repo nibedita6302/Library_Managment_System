@@ -174,12 +174,8 @@ class Download_Book(Resource):
             return {'message': {'error': 'Please Issue book to be able to download'}}, 403
         if user_book.return_date is not None:
             return {'message': {'error': 'The book has been returned!'}}, 400
+        
         book = Books.query.get(user_book.b_id)
-
-        result = download_pdf.delay(book.content_link_download)     ## Asynchronous Download
-        pdf_file = result.get()
-        if result.status!='SUCCESS':
-            return {'message': {'error': 'Download unsuccessful'}}, 400
 
         user_actv = UserActivity.query.get(issue_id)
         if book.total_bought is None:
@@ -195,7 +191,7 @@ class Download_Book(Resource):
         db.session.commit()
 
         ## Send file as attachement to be downloaded
-        return send_file(pdf_file, as_attachment=True, download_name=book.b_name+'.pdf')
+        return {'content_link_download':book.content_link_download}, 200
     
 ## API for only reading books
 class Read_Book(Resource):

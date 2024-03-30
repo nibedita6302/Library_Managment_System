@@ -6,6 +6,7 @@ import BookDetailsView from '@/views/BookDetailsView.vue';
 import BookList from '@/views/BookList.vue';
 import IssuesView from '@/views/IssuesView.vue';
 import SectionForm from '@/components/SectionForm.vue';
+import BookForm from '@/components/BookForm.vue';
 
 const routes = [
   { path: '/', name: 'HomeView' ,component: HomeView },
@@ -16,8 +17,8 @@ const routes = [
   { path: '/issues', component:IssuesView },
   { path: '/section/:section_id/update', component: SectionForm},
   { path: '/section/create', component: SectionForm},
-  // { path: '/book/:book_id/update', component: BookForm},
-  // { path: '/book/create', component: BookForm}
+  { path: '/book/:book_id/update', component: BookForm},
+  { path: '/book/create', component: BookForm},
   // { path: '/mystats', component: MyStatsView },
   // { path: '/myprofile', component: MyProfileView },
   // { path: '/analytics', component: AnalyticsView },

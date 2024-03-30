@@ -1,11 +1,24 @@
 <template>
+    <!-- Modal -->
+    <div class="modal fade" id="deleteAlert" tabindex="-1" aria-labelledby="modallabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title" id="modallabel">{{ message }}</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" 
+                    aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="container p-4">
-        <div class="d-flex justify-content-center">
-            <button class="btn btn-success">
+        <div v-if="user.role==1" class="d-flex justify-content-center">
+            <button class="btn" id="btn-section"  @click="go_to_create">
                 <i class="bi bi-shield-fill-plus"></i>
                 Add New Section
             </button> &nbsp;
-            <button class="btn btn-success">
+            <button class="btn" id="btn-author">
                 <i class="bi bi-patch-plus-fill"></i>
                 Add New Author
             </button>
@@ -21,9 +34,10 @@
                         <router-link :to="'/section/'+s.s_id+'/books'" class="stretched-link"></router-link>
                     </div>
                 </div>
-                <div class="btn-group" role="group" aria-label="section">
-                    <button type="button" class="btn btn-warning" @click.prevent="updateSection">Update</button>
-                    <button type="button" class="btn btn-danger" @click.prevent="deleteSection">Delete</button>
+                <div v-if="user.role==1" class="btn-group" role="group" aria-label="section">
+                    <button type="button" class="btn btn-warning" @click="go_to_update(s.s_id)">Update</button>
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAlert"
+                    @click="deleteSection(s.s_id)">Delete</button>
                 </div>
             </div>
         </div>
@@ -37,7 +51,9 @@ export default{
     data(){
         return{
             sections: [],
-            user: JSON.parse(localStorage.getItem('user'))
+            user: JSON.parse(localStorage.getItem('user')),
+            token: localStorage.getItem('auth_token'),
+            message: ''
         }
     },
     methods:{
@@ -53,10 +69,27 @@ export default{
                 this.sections = data;  // set output
             }catch(error){console.log(error);} 
         }, 
-        async updateSection(){
-            
+        go_to_update(s_id){
+            this.$router.push('/section/'+s_id+'/update')
+        }, 
+        go_to_create(){
+            this.$router.push('/section/create')
         },
-        async deleteSection(){
+        async deleteSection(s_id){
+            try{
+                const res = await fetch('http://localhost:8000/api/section/delete/'+s_id, {
+                    method: 'DELETE',
+                    mode: 'cors',
+                    credentials: 'include',
+                    headers: {
+                        'Authorization': this.token
+                    }
+                })
+                if (!res.ok && res.status!=404 && res.status!=409) { throw Error("HTTP Error at Section Delete:"+res.status) }
+                const data = await res.json() ;
+                if (res.status==404 || res.status==409){ this.message=data.message.error }
+                else {this.message=data.message.success}
+            }catch(error){console.log(error);} 
         }
     },
     created(){
@@ -70,6 +103,12 @@ img{
     min-height: 150px;
 }
 i{
-    font-size: x-large
+    font-size: x-large;
+}
+button#btn-author{
+    background-color: orange;
+}
+button#btn-section{
+    background-color: lightsalmon;
 }
 </style>

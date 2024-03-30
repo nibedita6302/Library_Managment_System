@@ -14,6 +14,32 @@
         </div>
     </div>
 
+    <!-- Modal -->
+    <div class="modal fade" id="payementGate" tabindex="-1" aria-labelledby="modallabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="modallabel">Payment Gateway</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" 
+                    aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h5>Buy {{b_name}} PDF for ₹{{ pdf_price }}</h5>
+                    <p> Click confirm to proceed </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal" aria-label="Close"
+                    @click="BuyBook(issue_id, b_name)">
+                        Confirm
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="container p-4">
         <h4>Current Issue</h4>
         <div class="container p-3">
@@ -56,8 +82,9 @@
                                     Read
                                 </button>
                                 <!-- Read Book -->
-                                <button type="button" class="btn btn-success" @click="BuyBook(issue.issue_id, issue.b_name)"
-                                data-bs-toggle="modal" data-bs-target="#alert2" >
+                                <button type="button" class="btn btn-success" 
+                                @click="setValues(issue.b_name, issue.issue_id, issue.pdf_price )"
+                                data-bs-toggle="modal" data-bs-target="#payementGate" > 
                                     <i class="bi bi-file-earmark-arrow-down-fill"></i>
                                     Download
                                 </button>
@@ -85,7 +112,10 @@ export default{
             user: JSON.parse(localStorage.getItem('user')),
             token: localStorage.getItem('auth_token'),
             current_issues: [],
-            message: ''
+            message: '',
+            b_name: '',
+            pdf_price: null,
+            issue_id: null
         }
     },
     methods:{
@@ -93,6 +123,11 @@ export default{
             var lst = date.split(" ");
             var newdate = lst[1]+" "+lst[2]+" "+lst[3];
             return newdate;
+        },
+        setValues(b_name, issue_id, pdf_price){
+            this.b_name = b_name;
+            this.issue_id = issue_id;
+            this.pdf_price = pdf_price;
         },
         async fetchCurrentIssues(){
             try{
@@ -165,6 +200,25 @@ export default{
             try{
                 const res = await fetch("http://localhost:8000/api/issue-requests/return/"+issue_id, {
                     method: 'PUT',
+                    mode: 'cors',
+                    credentials: 'include',
+                    headers:{
+                        'Authorization': `${this.token}`,
+                    }
+                })
+                if (!res.ok && res.status!=400) { throw Error("HTTP Error at get return book:"+res.status)}
+                const data = await res.json() ;
+                if (res.status==400){
+                    this.message = data.message.error;
+                }else{
+                    this.message = data.message.success;
+                }
+            }catch(error){console.log(error);} 
+        },
+        async revokeIssue(issue_id){
+            try{
+                const res = await fetch("http://localhost:8000/api/issue-requests/revoke/"+issue_id, {
+                    method: 'POST',
                     mode: 'cors',
                     credentials: 'include',
                     headers:{

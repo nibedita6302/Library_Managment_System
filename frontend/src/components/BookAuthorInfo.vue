@@ -20,7 +20,7 @@
         <div class="col-sm">
             <img :src="bImage" :alt="book.b_name"/>
         </div>
-        <div class="col-sm">
+        <div class="col-sm-8">
             <h1>{{ book.b_name }}</h1>
             <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#info1" 
             @click="IssueBookRequest">

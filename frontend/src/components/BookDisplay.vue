@@ -21,10 +21,12 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success" data-bs-dismiss="modal" aria-label="Close"
-                    data-bs-toggle="modal" data-bs-target="#info5" @click="deleteBook(s_id)">
+                    data-bs-toggle="modal" data-bs-target="#info5" @click="deleteBook(b_id)">
                         Confirm
                     </button> 
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Cancel
+                    </button>
                 </div>
             </div>
         </div>
@@ -55,8 +57,10 @@
                     </div>
                     <div v-if="user.role==1" class="btn-group me-2" role="group" aria-label="section">
                         <button type="button" class="btn btn-warning" @click="go_to_update(book.b_id)">Update</button>
-                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteBook"
-                        @click="deleteBook(book.b_id)">Delete</button>
+                        <button type="button" class="btn btn-danger" @click="b_id=book.b_id"
+                        data-bs-toggle="modal" data-bs-target="#deleteBook">
+                            Delete
+                        </button>
                     </div>
                 </div>
             </div>
@@ -75,7 +79,8 @@ export default{
             section: {},
             user: JSON.parse(localStorage.getItem('user')),
             token: localStorage.getItem('auth_token'),
-            message: ''
+            message: '',
+            b_id: null
         }
     },
     methods:{

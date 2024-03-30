@@ -1,12 +1,30 @@
 <template>
     <!-- Modal -->
-    <div class="modal fade" id="deleteAlert" tabindex="-1" aria-labelledby="modallabel" aria-hidden="true">
+    <div class="modal fade" id="info4" tabindex="-1" aria-labelledby="modallabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <p class="modal-title" id="modallabel">{{ message }}</p>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" 
                     aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteAlert" tabindex="-1" aria-labelledby="modallabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <p class="modal-title" id="modallabel">Click confirm to delete Section</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal" aria-label="Close"
+                    data-bs-toggle="modal" data-bs-target="#info4" @click="deleteSection(s_id)">
+                        Confirm
+                    </button> 
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 </div>
             </div>
         </div>
@@ -35,9 +53,13 @@
                     </div>
                 </div>
                 <div v-if="user.role==1" class="btn-group" role="group" aria-label="section">
-                    <button type="button" class="btn btn-warning" @click="go_to_update(s.s_id)">Update</button>
+                    <button type="button" class="btn btn-warning" @click="go_to_update(s.s_id)">
+                        Update
+                    </button>
                     <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAlert"
-                    @click="deleteSection(s.s_id)">Delete</button>
+                    @click="s_id = s.s_id">
+                        Delete
+                    </button>
                 </div>
             </div>
         </div>
@@ -51,6 +73,7 @@ export default{
     data(){
         return{
             sections: [],
+            s_id: null, 
             user: JSON.parse(localStorage.getItem('user')),
             token: localStorage.getItem('auth_token'),
             message: ''

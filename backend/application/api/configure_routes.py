@@ -1,6 +1,6 @@
 from .users import UserRegister, UserProfile
 from .sections import ManageSections, DisplaySections
-from .authors import AuthorManagement
+from .authors import AuthorManagement, AuthorDisplay
 from .books import ManageBook, Books_in_Section, Download_Book, Read_Book
 from .reviews import UserReview
 from .search import SearchBooks
@@ -30,6 +30,7 @@ def section_api(api):
 def author_api(api):
     api.add_resource(AuthorManagement, '/author/<int:author_id>', '/author/create', 
                      '/author/update/<int:author_id>', '/author/delete/<int:author_id>/<int:confirm>')
+    api.add_resource(AuthorDisplay, '/all-authors')
 
 def book_api(api):
     api.add_resource(ManageBook, '/book/<int:book_id>', '/book/create', '/book/update/<int:book_id>',

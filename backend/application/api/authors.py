@@ -62,3 +62,9 @@ class AuthorManagement(Resource):
             db.session.commit()
             return {'message': {'success': f'Author with ID {author.a_id} deletion confirmed!'}}, 200
         return {'message': {'success': 'Canceled Delete'}}, 200
+    
+class AuthorDisplay(Resource):
+    @roles_required('librarian')
+    def get(self):                      ## Get All Authors 
+        author = Author.query.all()
+        return marshal(author, author_field), 200

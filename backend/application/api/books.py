@@ -12,7 +12,6 @@ from application.models.users import Users
 from application.models.books import Books, Sections, Author
 from application.models.reviews import Reviews
 from application.models.user_book_activity import UserBook, UserActivity
-from application.jobs.Tasks.asyncDownload import download_pdf
 
 book_field = {
     "b_id": fields.Integer, 
@@ -55,7 +54,7 @@ class ManageBook(Resource):
 
     @auth_required('token')
     @roles_required('librarian')
-    def post(self):             ## Create New book
+    def post(self):                              ## Create New book
         formData = request.form.to_dict()
         if len(formData)==9:
             if (not Sections.query.get(formData['s_id'])) or (not Author.query.get(formData['a_id'])):
@@ -66,6 +65,14 @@ class ManageBook(Resource):
             if int(formData['pdf_price'])<=0:
                 return {'message': {'error': 'Download Price should be greater than 0'}}, 400
             
+            ## Converting file ID to Links
+            formData['content_link_view'] = 'https://drive.google.com/file/d/'+formData['content_view_id']+'/view?usp=drive_link'
+            formData['content_link_download'] = 'https://drive.google.com/uc?export=download&id='+formData['content_download_id']
+            
+            ## Delete file ids
+            del formData['content_view_id']
+            del formData['content_download_id']
+
             author = Author.query.get(formData['a_id'])     ## Add Author Book relationship
             book = Books(**formData, writer=[author])
 
@@ -133,30 +140,27 @@ class ManageBook(Resource):
 
     @auth_required('token')
     @roles_required('librarian')
-    def delete(self, book_id, confirm):  ## Delete book if no issues
-        if confirm:
-            book = Books.query.get(book_id)
-            if not book:
-                return {'message': {'error': 'Book does not exists'}}, 404
-            active_issuers = UserBook.query.filter(UserBook.b_id==book_id, 
-                                                   UserBook.return_date == None).all()
-            if len(active_issuers)>0:
-                ## 409 HTTP Code for Conflict with current state of target resource
-                return {'message': {
-                            'error': 'Cannot delete Book because it still has associated issues.\
-                                  Please revoke all issues first.'
-                        }}, 409   
-            ## Remove image 
-            os.remove(os.path.join(app.config['UPLOAD_FOLDER']+'upload/', book.b_image))     
+    def delete(self, book_id):  ## Delete book if no issues
+        book = Books.query.get(book_id)
+        if not book:
+            return {'message': {'error': 'Book does not exists'}}, 404
+        active_issuers = UserBook.query.filter(UserBook.b_id==book_id, 
+                                                UserBook.return_date == None).all()
+        if len(active_issuers)>0:
+            ## 409 HTTP Code for Conflict with current state of target resource
+            return {'message': {
+                        'error': 'Cannot delete Book because it still has associated issues.\
+                                Please revoke all issues first.'
+                    }}, 409   
+        ## Remove image 
+        os.remove(os.path.join(app.config['UPLOAD_FOLDER']+'upload/', book.b_image))     
 
-            section = Sections.query.get(book.s_id)
-            section.book_count-= 1         ## decrement book_count on deletion
+        section = Sections.query.get(book.s_id)
+        section.book_count-= 1         ## decrement book_count on deletion
 
-            db.session.delete(book)   
-            db.session.commit()
-            return {'message': {'success': 'Deleted Book'}}, 200
-        else:
-            return {'message': {'success': 'Canceled Delete'}}, 200 
+        db.session.delete(book)   
+        db.session.commit()
+        return {'message': {'success': 'Deleted Book'}}, 200
 
 class Books_in_Section(Resource):
     ## Display all books in section
@@ -195,14 +199,12 @@ class Download_Book(Resource):
         response = requests.get(url)         ## Request for PDF from url
         if response.status_code == 200:
             # if 'application/pdf' in content_type:                ## Check if the response contains a PDF
-            with open('temp.pdf', 'wb') as f:                ## Save the PDF to a temporary file
+            with open('static/temp.pdf', 'wb') as f:                ## Save the PDF to a temporary file
                 f.write(response.content)
 
-            return send_file('temp.pdf', as_attachment=True, download_name=f'{book.b_name}.pdf')
+            return send_file('static/temp.pdf', as_attachment=True, download_name=f'{book.b_name}.pdf')
         return {"message":{'error':f'Unable to download PDF, error status {response.status_code}'}}, 500
 
-
-    
 ## API for only reading books
 class Read_Book(Resource):
     @auth_required('token')

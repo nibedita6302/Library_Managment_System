@@ -103,22 +103,18 @@ class Issue_Request_Approval(Resource):
     
     @auth_required('token')
     @roles_required('librarian')
-    def post(self, issue_id, confirm):           ## Revoke Request
+    def post(self, issue_id):                       ## Revoke Request
         user_book = UserBook.query.get(issue_id)
-        if confirm:
-            if (user_book is not None) and (user_book.revoked!=1):
-                ## 1 day warning before Revoke
-                revoke_due = datetime.now() + timedelta(days=1)     
-                ## Due date set to revoke_due or due_date, which ever is Earliest
-                user_book.due_date = min(user_book.due_date, revoke_due)   
-                user_book.revoked = 1
-                db.session.commit()
+        if (user_book is not None) and (user_book.revoked!=1):
+            ## 1 day warning before Revoke
+            revoke_due = datetime.now() + timedelta(days=1)     
+            ## Due date set to revoke_due or due_date, which ever is Earliest
+            user_book.due_date = min(user_book.due_date, revoke_due)   
+            user_book.revoked = 1
+            db.session.commit()
 
-                ## Send email to user
-                revoke_issue_email.delay(user_book.user_id, user_book.b_id)
+            ## Send email to user
+            revoke_issue_email.delay(user_book.user_id, user_book.b_id)
 
-                return {'message':{'success':'Revoke successfull with 1 day warning'}}, 200
-            return {'message':{'error':'Book already Revoked or Issue does not exists'}}, 400
-        return {'message':{'success':'Revoke canceled'}}, 200
-
-        
+            return {'message':{'success':'Revoke successfull with 1 day warning'}}, 200
+        return {'message':{'error':'Book already Revoked'}}, 400

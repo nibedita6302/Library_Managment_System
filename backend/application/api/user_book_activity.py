@@ -15,6 +15,7 @@ current_issue_fields = {
     'issue_id': fields.Integer,
     'b_id': fields.Integer,
     'b_name': fields.String,
+    'pdf_price': fields.Float,
     's_name': fields.String,
     'a_name': fields.String,
     'issue_date': fields.DateTime,
@@ -27,7 +28,7 @@ class Issue_Book_Request(Resource):
         if 'librarian' in current_user.roles:
             ## All current issues
             issues = db.session.query(UserBook.issue_id, UserBook.b_id, UserBook.issue_date, UserBook.due_date,
-                                  Books.b_name, Sections.s_name, Author.a_name)\
+                                  Books.b_name, Books.pdf_price, Sections.s_name, Author.a_name)\
                             .join(Books, UserBook.b_id==Books.b_id)\
                             .join(Sections, Books.s_id==Sections.s_id)\
                             .join(Author, Books.a_id==Author.a_id)\
@@ -35,7 +36,7 @@ class Issue_Book_Request(Resource):
         else:
             ## Current issue for User-ID
             issues = db.session.query(UserBook.issue_id, UserBook.b_id, UserBook.issue_date, UserBook.due_date,
-                                  Books.b_name, Sections.s_name, Author.a_name)\
+                                  Books.b_name, Books.pdf_price, Sections.s_name, Author.a_name)\
                             .join(Books, UserBook.b_id==Books.b_id)\
                             .join(Sections, Books.s_id==Sections.s_id)\
                             .join(Author, Books.a_id==Author.a_id)\

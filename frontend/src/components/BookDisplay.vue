@@ -3,8 +3,8 @@
         <h4>Section: {{ section.s_name }}</h4><br>
         <p v-if="this.books.length==0">Empty Section</p>
         <div v-else class="container">
-            <div class="row row-col-3 g-2">
-                <div class="card col me-2" v-for="book in this.books" :key="book.b_id">
+            <div class="row row-col-3 g-4">
+                <div class="card col-sm-4" v-for="book in this.books" :key="book.b_id">
                     <div class="row g-0">
                         <div class="col-md-5">
                             <img :src="require('@/assets/upload/'+book.b_image)" 

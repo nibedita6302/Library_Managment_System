@@ -57,7 +57,7 @@
                         Update
                     </button>
                     <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAlert"
-                    @click="deleteSection(s.s_id)" :s_id="s.s_id">
+                    @click="s_id = s.s_id">
                         Delete
                     </button>
                 </div>

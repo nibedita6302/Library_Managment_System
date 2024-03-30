@@ -65,9 +65,6 @@ export default{
                 newData.append("s_image",image.files[0]);
             }
             newData.append("s_name", name.value)
-            // for (var p of newData.entries()){
-            //     console.log(p[0],p[1])
-            // }
             if (this.section_id==null){this.createSection(newData);}
             else {this.updateSection(newData)}
         },

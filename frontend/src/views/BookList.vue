@@ -1,7 +1,7 @@
 <template>
     <div v-if="user.role==1" class="d-flex justify-content-center p-4">
         <button class="btn" id="btn-book"  @click="go_to_create_book">
-            <i class="bi bi-shield-fill-plus"></i>
+            <i class="bi bi-plus-circle-fill"></i>
             Add New Book
         </button> 
     </div>
@@ -33,5 +33,8 @@ export default{
 <style scoped>
 button#btn-book{
     background-color: greenyellow;
+}
+i{
+    font-size: x-large;
 }
 </style>

@@ -140,30 +140,27 @@ class ManageBook(Resource):
 
     @auth_required('token')
     @roles_required('librarian')
-    def delete(self, book_id, confirm):  ## Delete book if no issues
-        if confirm:
-            book = Books.query.get(book_id)
-            if not book:
-                return {'message': {'error': 'Book does not exists'}}, 404
-            active_issuers = UserBook.query.filter(UserBook.b_id==book_id, 
-                                                   UserBook.return_date == None).all()
-            if len(active_issuers)>0:
-                ## 409 HTTP Code for Conflict with current state of target resource
-                return {'message': {
-                            'error': 'Cannot delete Book because it still has associated issues.\
-                                  Please revoke all issues first.'
-                        }}, 409   
-            ## Remove image 
-            os.remove(os.path.join(app.config['UPLOAD_FOLDER']+'upload/', book.b_image))     
+    def delete(self, book_id):  ## Delete book if no issues
+        book = Books.query.get(book_id)
+        if not book:
+            return {'message': {'error': 'Book does not exists'}}, 404
+        active_issuers = UserBook.query.filter(UserBook.b_id==book_id, 
+                                                UserBook.return_date == None).all()
+        if len(active_issuers)>0:
+            ## 409 HTTP Code for Conflict with current state of target resource
+            return {'message': {
+                        'error': 'Cannot delete Book because it still has associated issues.\
+                                Please revoke all issues first.'
+                    }}, 409   
+        ## Remove image 
+        os.remove(os.path.join(app.config['UPLOAD_FOLDER']+'upload/', book.b_image))     
 
-            section = Sections.query.get(book.s_id)
-            section.book_count-= 1         ## decrement book_count on deletion
+        section = Sections.query.get(book.s_id)
+        section.book_count-= 1         ## decrement book_count on deletion
 
-            db.session.delete(book)   
-            db.session.commit()
-            return {'message': {'success': 'Deleted Book'}}, 200
-        else:
-            return {'message': {'success': 'Canceled Delete'}}, 200 
+        db.session.delete(book)   
+        db.session.commit()
+        return {'message': {'success': 'Deleted Book'}}, 200
 
 class Books_in_Section(Resource):
     ## Display all books in section

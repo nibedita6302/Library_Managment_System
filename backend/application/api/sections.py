@@ -64,8 +64,11 @@ class ManageSections(Resource):
         
         if 's_name' in formData:
             ## Check if Section name is Unique
-            if (formData['s_name']!='') and (Sections.query.filter_by(s_name=formData['s_name']).first() is None):
-                section.s_name = formData['s_name']
+            if (Sections.query.filter_by(s_name=formData['s_name']).first() is None):
+                if (formData['s_name']==''):    ## Keep the same name
+                    pass
+                else: 
+                    section.s_name = formData['s_name']
             else:
                 return {'message': {'error': 'Section Name must be Unique'}}, 400
         if 's_image' in request.files:      ## Check if Image Uploaded
@@ -79,24 +82,21 @@ class ManageSections(Resource):
         
     @auth_required('token')
     @roles_required('librarian')
-    def delete(self, section_id, confirm):       ## Delete Section 
-        if confirm:
-            section = Sections.query.get(section_id)
-            if not section:
-                return {'message': {'error': 'Section does not exists'}}, 404
-            books = Books.query.filter_by(s_id=section_id).all()
-            if len(books)>0:
-                ## 409 HTTP Code for Conflict with current state of target resource
-                return {'message': {
-                            'error': 'Cannot delete Section because it still has associated books. Please delete all books first.'
-                        }}, 409 
-            ## Remove image 
-            os.remove(os.path.join(app.config['UPLOAD_FOLDER']+'upload/', section.s_image)) 
-            db.session.delete(section)   
-            db.session.commit()
-            return {'message': {'success': 'Deleted Section'}}, 200
-        else:
-            return {'message': {'success': 'Canceled Delete'}}, 200
+    def delete(self, section_id):       ## Delete Section 
+        section = Sections.query.get(section_id)
+        if not section:
+            return {'message': {'error': 'Section does not exists'}}, 404
+        books = Books.query.filter_by(s_id=section_id).all()
+        if len(books)>0:
+            ## 409 HTTP Code for Conflict with current state of target resource
+            return {'message': {
+                        'error': 'Cannot delete Section because it still has associated books. Please delete all books first.'
+                    }}, 409 
+        ## Remove image 
+        os.remove(os.path.join(app.config['UPLOAD_FOLDER']+'upload/', section.s_image)) 
+        db.session.delete(section)   
+        db.session.commit()
+        return {'message': {'success': 'Deleted Section'}}, 200
 
 class DisplaySections(Resource):
     def get(self):      ## Display all Sections

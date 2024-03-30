@@ -118,5 +118,3 @@ class Issue_Request_Approval(Resource):
 
             return {'message':{'success':'Revoke successfull with 1 day warning'}}, 200
         return {'message':{'error':'Book already Revoked'}}, 400
-
-        

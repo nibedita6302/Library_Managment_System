@@ -5,7 +5,6 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <p class="modal-title" id="modallabel">
-                        <!-- <i class="bi bi-exclamation-triangle-fill" style="color:orange;"></i> -->
                         {{ message }}
                     </p>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" 

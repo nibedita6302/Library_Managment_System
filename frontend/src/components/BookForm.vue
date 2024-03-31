@@ -61,7 +61,7 @@ export default{
                 {label: 'Book Image', type:'file', id:'b_image'},
                 {label: 'Select Author', type:'select', id:'a_id', data:''},
                 {label: 'Select Section', type:'select', id:'s_id', data:''},
-                {label: 'PDF Price', type:'number', min:"1", step:"0.01", id:'pdf_price', data:''},
+                {label: 'PDF Price (₹)', type:'number', min:"1", step:"0.01", id:'pdf_price', data:''},
                 {label: 'Publisher', type:'text', id:'publisher', data:''},
                 {label: 'Published Date', type:'date', id:'date_published', data:''},
                 {label: 'Content ID (Only View)', type:'text', id:'content_view_id', data:''},

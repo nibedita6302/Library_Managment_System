@@ -5,8 +5,8 @@
         </div>
         <div class="row row-col-2 p-2">
             <div class="col-sm-6">
-                <h5>Section Popularity Among Users</h5>
-                <img :src="section_read_path" height="400" width="600"/>
+                <h5>Book Popularity Among Users</h5>
+                <img :src="book_read_path" height="400" width="600"/>
             </div>
             <div class="col-sm-6">
                 <h5>Section Wise Revenue Generation Distribution</h5>
@@ -23,7 +23,7 @@ export default{
         return {
             user: JSON.parse(localStorage.getItem('user')),
             token: localStorage.getItem('auth_token'),
-            section_read_path: '',
+            book_read_path: '',
             section_revenue_path: ''
         }
     }, 
@@ -44,7 +44,7 @@ export default{
                 })
                 if (!res.ok) { throw Error("HTTP Error at Lib Stats:"+res.status) }
                 const data = await res.json() ;
-                this.section_read_path = this.getImage(data.section_read_path);         // set output
+                this.book_read_path = this.getImage(data.book_read_path);         // set output
                 this.section_revenue_path = this.getImage(data.section_revenue_path);
             }catch(error){console.log(error);} 
         }

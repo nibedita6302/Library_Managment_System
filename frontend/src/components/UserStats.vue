@@ -5,11 +5,11 @@
         </div>
         <div class="row row-col-2 p-2">
             <div class="col-sm-6">
-                <h5>Section Popularity Among Users</h5>
+                <h5>Section Popularity</h5>
                 <img :src="section_dist_path" height="400" width="400"/>
             </div>
             <div class="col-sm-6">
-                <h5>Section Wise Revenue Generation Distribution</h5>
+                <h5>Favourite Author</h5>
                 <img :src="fav_author_path" height="400" width="400"/>
             </div>
         </div>

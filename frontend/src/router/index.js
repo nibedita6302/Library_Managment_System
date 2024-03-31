@@ -10,6 +10,7 @@ import BookForm from '@/components/BookForm.vue';
 import AuthorsPage from '@/views/AuthorsPage.vue';
 import AnalyticsView from '@/views/AnalyticsView.vue';
 import MyStatsView from '@/views/MyStatsView.vue';
+import MyProfile from '@/views/MyProfile.vue';
 
 const routes = [
   { path: '/', name: 'HomeView' ,component: HomeView },
@@ -24,7 +25,7 @@ const routes = [
   { path: '/book/create', component: BookForm},
   { path: '/authors', component: AuthorsPage},
   { path: '/mystats', component: MyStatsView },
-  // { path: '/myprofile', component: MyProfileView },
+  { path: '/myprofile', component: MyProfile},
   { path: '/analytics', component: AnalyticsView },
   { path: '/login', name: 'LoginView' ,component: LoginView },
 

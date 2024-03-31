@@ -34,7 +34,7 @@
         <div v-if="user.role==1" class="d-flex justify-content-center p-3">
             <button class="btn" id="btn-author"  @click="showForm=true">
                 <i class="bi bi-patch-plus-fill"></i>
-                Add New Book
+                Add New Author
             </button> 
         </div><br>
         <div class="row row-col-3 g-3 d-flex justify-content-center">

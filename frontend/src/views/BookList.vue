@@ -1,10 +1,4 @@
 <template>
-    <div v-if="user.role==1" class="d-flex justify-content-center p-4">
-        <button class="btn" id="btn-book"  @click="go_to_create_book">
-            <i class="bi bi-plus-circle-fill"></i>
-            Add New Book
-        </button> 
-    </div>
     <BookDisplay :section_id="section_id"></BookDisplay>
 </template>
 
@@ -23,18 +17,9 @@ export default{
         BookDisplay
     },
     methods:{
-        go_to_create_book(){
-            this.$router.push('/book/create');
-        }
     }
 }
 </script>
 
 <style scoped>
-button#btn-book{
-    background-color: greenyellow;
-}
-i{
-    font-size: x-large;
-}
 </style>

@@ -77,6 +77,7 @@ class ManageBook(Resource):
             book = Books(**formData, writer=[author])
 
             if 'b_image' in request.files:
+                print('in image')
                 image = request.files['b_image']
                 if image.filename != "":
                     extension = '.'+image.filename.split('.')[-1]

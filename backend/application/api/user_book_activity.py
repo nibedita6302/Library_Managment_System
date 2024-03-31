@@ -9,6 +9,7 @@ from flask_security import auth_required, roles_required
 
 from application.models.user_book_activity import UserBook, UserActivity, IssueRequest
 from application.models.books import Books, Sections, Author
+from utils.generateGraphs import create_bar_graph, create_pie_chart
 from utils.analytics import *
 
 current_issue_fields = {
@@ -144,17 +145,30 @@ class UserStats(Resource):
     @auth_required('token')
     @roles_required('user')
     def get(self):
+        month = datetime.now().strftime('%B')
+        year = datetime.now().strftime('%Y')
+
         ## Section Wise Distribution - Book Reads
         section_count = section_distribution_user(current_user.id)
+        data1 = {}
+        for obj in section_count:                                                   ## Convert to dictionary
+            data1[obj.section_name] = obj.count
+        image_path1 = create_pie_chart(data=data1, title='Reader Preference Pie',    ## Add the pie chart
+                    filename=f'pie_{month}_{year}',save_to=1) 
         
         ## Favourite Author
         author = fav_author(current_user.id)
-        
+        data1 = {}
+        for obj in author:                                                    ## Convert to dictionary
+            data1[obj.author_name] = obj.count
+        image_path2 = create_bar_graph(data=data1, title='Author Read-o-Meter',    ## Add the pie chart
+                                    filename=f'bar_{month}_{year}',save_to=1) 
+         
         ## Ranking in different book reads (top 3 & current user rank)
         ranking = user_ranking()
         
         return {
-            'section_distribution': marshal(section_count, section_count_field),
-            'favourite_author': marshal(author, fav_author_field),
+            'section_dist_path': image_path1,
+            'fav_author_path': image_path2,
             'ranking': marshal(ranking, ranking_field)
         }, 200

@@ -31,7 +31,7 @@
     </div>
 
     <div class="container p-4">
-        <div v-if="user.role==1" class="d-flex justify-content-center">
+        <div v-if="isLibrarian()" class="d-flex justify-content-center">
             <button class="btn" id="btn-section"  @click="go_to_create">
                 <i class="bi bi-shield-fill-plus"></i>
                 Add New Section
@@ -56,7 +56,7 @@
                         <router-link :to="'/section/'+s.s_id+'/books'" class="stretched-link"></router-link>
                     </div>
                 </div>
-                <div v-if="user.role==1" class="btn-group" role="group" aria-label="section">
+                <div v-if="isLibrarian()" class="btn-group" role="group" aria-label="section">
                     <button type="button" class="btn btn-warning" @click="go_to_update(s.s_id)">
                         Update
                     </button>
@@ -84,6 +84,12 @@ export default{
         }
     },
     methods:{
+        isLibrarian(){
+            if (this.user!=null){
+                if (this.user.role==1) { return true; }
+            }
+            return false;
+        },
         async fetchSectionList(){
             try{
                 const res = await fetch('http://localhost:8000/api/home/sections', {

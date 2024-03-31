@@ -191,25 +191,23 @@ class Download_Book(Resource):
             book.total_bought+=1                    ## Increment Total book bought in Books
         user_book.bought_price = book.pdf_price     ## Add bought price in UserBooks
         user_actv.bought_price = book.pdf_price     ## Add bought price in UserActivity
-
+        
         user = Users.query.get(current_user.id)      
         user.latest_activity = datetime.now()       ## Set User Activity
 
-        db.session.commit()
-
         response = requests.get(url)         ## Request for PDF from url
         if response.status_code == 200:
-            # if 'application/pdf' in content_type:                ## Check if the response contains a PDF
+            db.session.commit()
             with open('static/temp.pdf', 'wb') as f:                ## Save the PDF to a temporary file
                 f.write(response.content)
 
             return send_file('static/temp.pdf', as_attachment=True, download_name=f'{book.b_name}.pdf')
-        return {"message":{'error':f'Unable to download PDF, error status {response.status_code}'}}, 500
+        return {"message":{'error':f'Unable to download PDF, google drive error status: {response.status_code}'}}, 500
 
 ## API for only reading books
 class Read_Book(Resource):
     @auth_required('token')
-    @roles_required('user')
+    @roles_required('user') 
     def get(self, issue_id):                        ## Read Book Only
         user_book = UserBook.query.get(issue_id)
         if (user_book is None) or (user_book.user_id!=current_user.id):

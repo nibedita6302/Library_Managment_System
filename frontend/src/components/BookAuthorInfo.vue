@@ -130,6 +130,7 @@ export default{
         getImage(){
             // console.log("path:"+this.book.b_image);
             this.bImage = require(`@/assets/upload/${this.book.b_image}`);
+            // console.log(this.bImage)
         },
         async fetchBookByID(){
             try{

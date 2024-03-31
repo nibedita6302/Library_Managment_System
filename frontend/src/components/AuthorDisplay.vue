@@ -41,7 +41,7 @@
             <div class="col-sm-3 card me-3" v-for="a in author_data" :key="a.a_id">
                 <h5 class="d-flex card-title justify-content-center p-1">{{a.a_name}}</h5> 
                 <p class="card-body">{{ a.about_author }}</p>
-                <div v-if="user.role==1" class="btn-group" role="group" aria-label="section">
+                <div class="card-footer" v-if="user.role==1">
                     <button type="button" class="btn btn-warning" @click="go_to_form(a)">
                         Update
                     </button>

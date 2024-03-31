@@ -49,7 +49,7 @@ export default{
             }catch(error){console.log(error);}
         },
         handleClose(){
-            this.$router.push('/login');  // reload page
+            this.$router.push('/login');  // redirect to Login page
         }
     }
 }

@@ -4,9 +4,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <p class="modal-title" id="modallabel">
-                        {{ message }}
-                    </p>
+                    <p class="modal-title" id="modallabel">{{ message }}</p>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" 
                     aria-label="Close"></button>
                 </div>
@@ -87,6 +85,7 @@ export default{
             }catch(error){console.log(error);} 
         },
         async postIssueApproval(approval, b_id, u_id){
+            // NEED CELERY TO WORK
             try{
                 const res = await fetch("http://localhost:8000/api/issue-requests/approval/"+b_id+'/'+u_id, {
                     method: 'PUT',
@@ -100,10 +99,13 @@ export default{
                 })
                 if (!res.ok && res.status!=400) { throw Error("HTTP Error at pending issue:"+res.status) }
                 const data = await res.json() ;
+                console.log(data)
                 if (res.status==400){
                     this.message = data.message.error;  // set error
+                    console.log(this.message, 'here eror')
                 }else{
                     this.message = data.message.success;
+                    console.log(this.message, 'here success')
                 }
             }catch(error){console.log(error);} 
         }

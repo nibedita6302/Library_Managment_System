@@ -55,7 +55,7 @@
                         </div>
                         <router-link :to="'/book/'+book.b_id" class="stretched-link"></router-link>
                     </div>
-                    <div v-if="user.role==1" class="btn-group me-2" role="group" aria-label="section">
+                    <div v-if="isLibrarian()" class="btn-group me-2" role="group" aria-label="section">
                         <button type="button" class="btn btn-warning" @click="go_to_update(book.b_id)">Update</button>
                         <button type="button" class="btn btn-danger" @click="b_id=book.b_id"
                         data-bs-toggle="modal" data-bs-target="#deleteBook">
@@ -84,6 +84,11 @@ export default{
         }
     },
     methods:{
+        isLibrarian(){
+            if (this.user!=null){
+                if (this.user.role==1) { return true ;}
+            }else { return false; }
+        },
         getDate(date){
             var lst = date.split(" ");
             var newdate = lst[1]+" "+lst[2]+" "+lst[3];

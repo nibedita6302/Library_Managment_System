@@ -32,7 +32,7 @@ def create_pdf(user_id):
     for obj in objects1:                         ## Convert to dictionary
         data1[obj.section_name] = obj.count
     image_path = create_pie_chart(data=data1, title='Reader Preference Pie',    ## Add the pie chart
-                                  filename=f'pie_{month}_{year}')   
+                                  filename=f'pie_{month}_{year}')    
     img = Image(image_path, width=3*inch, height=3*inch)   
     elements.append(img)
 

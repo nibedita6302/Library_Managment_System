@@ -1,6 +1,5 @@
 <template>
-    <LibStats v-if="isLibrarian"></LibStats>
-    
+    <LibStats></LibStats>
 </template>
 
 <script>
@@ -10,8 +9,8 @@ export default{
     name: 'AnalyticsView',
     data(){
         return {
-            user: JSON.parse(localStorage.getItem('user')),
-            token: localStorage.getItem('auth_token')
+            // user: JSON.parse(localStorage.getItem('user')),
+            // token: localStorage.getItem('auth_token')
         }
     },
     components: {
@@ -33,7 +32,3 @@ export default{
     }
 }
 </script>
-
-<style>
-
-</style>

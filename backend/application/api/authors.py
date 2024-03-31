@@ -9,6 +9,7 @@ from flask_security import auth_required, roles_required
 from application.models.books import Author, AuthorBook
 
 author_field = {
+    'a_id': fields.Integer,
     'a_name': fields.String,
     'about_author': fields.String
 }
@@ -50,8 +51,7 @@ class AuthorManagement(Resource):
 
     @auth_required('token')
     @roles_required('librarian')
-    def delete(self, author_id, confirm):               ## Delete Author details
-        if confirm:
+    def delete(self, author_id):  
             author = Author.query.get(author_id)
             print(author.biblography)
             if author.biblography != []:          ## Check if any book id writen by author
@@ -61,7 +61,6 @@ class AuthorManagement(Resource):
             db.session.delete(author)
             db.session.commit()
             return {'message': {'success': f'Author with ID {author.a_id} deletion confirmed!'}}, 200
-        return {'message': {'success': 'Canceled Delete'}}, 200
     
 class AuthorDisplay(Resource):
     @roles_required('librarian')

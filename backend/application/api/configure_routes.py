@@ -29,7 +29,7 @@ def section_api(api):
 
 def author_api(api):
     api.add_resource(AuthorManagement, '/author/<int:author_id>', '/author/create', 
-                     '/author/update/<int:author_id>', '/author/delete/<int:author_id>/<int:confirm>')
+                     '/author/update/<int:author_id>', '/author/delete/<int:author_id>')
     api.add_resource(AuthorDisplay, '/all-authors')
 
 def book_api(api):

@@ -12,17 +12,6 @@ from application.models.users import Users
 from utils.generateGraphs import lib_bar_chart, lib_pie_chart
 from application.jobs.Tasks.bookIssueStatusEmail import *
 
-
-section_read_field = {
-    'section_name': fields.String,
-    'count': fields.Integer
-}
-
-section_revenue_field = {
-    'section_name': fields.String,
-    'revenue': fields.Float
-}
-
 active_users_field = {
     'name': fields.String,
     'book_issue': fields.Integer
@@ -33,11 +22,10 @@ class LibrarianAnalytics(Resource):
     @roles_required('librarian')
     def get(self):      
         ## Section wise user-read distribution 
-        section_read_count = db.session.query(Sections.s_name.label('section_name'), 
-                                            db.func.sum(Books.total_issue).label('count'))\
-                                .filter(Books.s_id==Sections.s_id)\
-                                .group_by(Sections.s_id).all()
-        section_read_path = lib_bar_chart(section_read_count, 'Section Popularity in Users', 'lib_section_read_bar')
+        book_read_count = db.session.query(Books.b_name.label('book_name'), 
+                                           Books.total_issue.label('count')).all()
+        print(book_read_count)
+        book_read_path = lib_bar_chart(book_read_count, 'Book Popularity in Users', 'lib_book_read_bar')
         
         ## Section wise revenue distribution
         section_revenue =  db.session.query(UserActivity.section_name, 
@@ -52,7 +40,7 @@ class LibrarianAnalytics(Resource):
                         .group_by(Users.id).order_by(db.func.count('*').desc()).all()
 
         return {
-            'section_read_path': section_read_path,
+            'book_read_path': book_read_path,
             'section_revenue_path': section_revenue_path,
             'active_users': marshal(active_users, active_users_field)
         }, 200

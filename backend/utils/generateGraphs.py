@@ -60,14 +60,14 @@ def lib_pie_chart(data, title, filename):  ## HTML Only
 
 def lib_bar_chart(data, title, filename):  ## HTML Only
     # print(data)
-    x = [d[0] for d in data]
+    x = [d[0][:5]+'...'+d[0][len(d[0])-5:] for d in data]
     y = [d[1] for d in data]
 
     color = ['cyan', 'purple', 'green', 'orange', 'pink', 'lightgreen','violet', 'blue', 'red', 'yellow', 'olive']
     color_set = color*(len(x)//len(color) + 1)
 
     fig = go.Figure([go.Bar(x=x, y=y, marker=dict(color=color_set[:len(x)], line=dict(width=0.4)))])
-    fig.update_layout(title_text=title, xaxis_title='Author', yaxis_title='Reads',
+    fig.update_layout(title_text=title, xaxis_title='Section', yaxis_title='Book Issue Count',
                       paper_bgcolor='white',  # Set background color
                       plot_bgcolor='lightyellow',  # Set plot area color
                       width=800, height=600)    # Set overall graph size

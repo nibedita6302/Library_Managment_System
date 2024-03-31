@@ -4,6 +4,7 @@ from application.database import db
 from security import datastore
 from flask import request, jsonify, current_app as app
 from flask_login import current_user
+from application.redis_cache import cache
 from flask_security import auth_required, roles_required
 
 from application.models.books import Author, AuthorBook
@@ -15,6 +16,7 @@ author_field = {
 }
 
 class AuthorManagement(Resource):
+    @cache.cached()
     def get(self, author_id):       ## Get Author details 
         author = Author.query.get(author_id)
         if not author:

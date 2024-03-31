@@ -6,6 +6,7 @@ from flask_login import current_user, logout_user
 from flask_security import auth_required, roles_required
 
 from application.models.users import Users, RoleUsers
+from application.models.user_book_activity import UserActivity
 from utils.credentials import *
 
 class UserRegister(Resource):    
@@ -100,9 +101,10 @@ class UserProfile(Resource):
             if user.roles[0].name == 'librarian':
                 return {'message': {'error': 'Unauthorized Delete Operation'}}, 400
             user_role = db.session.query(RoleUsers).filter_by(user_id=current_user.id).first()
-            print(user_role)
+            user_actv = UserActivity.query.filter(user_id=current_user.id).all()
+            for u in user_actv:
+                db.session.delete(u) 
             db.session.delete(user)
-            #db.session.delete(user_role)
             db.session.commit()
             return {'message': {'success': 'Deleted User'}}, 200
         

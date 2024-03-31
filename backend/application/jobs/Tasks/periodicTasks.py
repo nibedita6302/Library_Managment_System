@@ -14,11 +14,11 @@ from application.models.users import Users
 @celery.on_after_finalize.connect
 def setup_periodic_tasks(sender, **kwargs):
     #sender.add_periodic_task(2.0, print_current_time_job.s(), name='add every 10')
-    sender.add_periodic_task(crontab(hour=21, minute=12), 
+    sender.add_periodic_task(crontab(hour=21, minute=24), 
                              daily_reminder.s(), name='Daily Reminder for not active Users')
-    sender.add_periodic_task(crontab(hour=21, minute=52, day_of_month='16', month_of_year='*'), 
+    sender.add_periodic_task(crontab(hour=21, minute=25, day_of_month='31', month_of_year='*'), 
                              monthly_activity_report.s(), name='Monthly User Activity Report')
-    sender.add_periodic_task(crontab(hour=22, minute=5), 
+    sender.add_periodic_task(crontab(hour=21, minute=25), 
                              issue_clean_up.s(), name='Daily Reminder for not active Users')
 
 ## Delete IssueRequest if not PENDING - Celery (Once a day)

@@ -153,7 +153,7 @@ class UserStats(Resource):
         data1 = {}
         for obj in section_count:                                                   ## Convert to dictionary
             data1[obj.section_name] = obj.count
-        image_path1 = create_pie_chart(data=data1, title='Reader Preference Pie',    ## Add the pie chart
+        image_path1 = create_pie_chart(data=data1, title='Reader Preference',    ## Add the pie chart
                     filename=f'pie_{month}_{year}',save_to=1) 
         
         ## Favourite Author

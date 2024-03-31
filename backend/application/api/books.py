@@ -12,6 +12,7 @@ from application.models.users import Users
 from application.models.books import Books, Sections, Author
 from application.models.reviews import Reviews
 from application.models.user_book_activity import UserBook, UserActivity
+from application.redis_cache import cache
 
 book_field = {
     "b_id": fields.Integer, 
@@ -37,7 +38,8 @@ review_field = {
 }
 
 
-class ManageBook(Resource): 
+class ManageBook(Resource):
+    @cache.cached() 
     def get(self, book_id):     ## Get book detail by book ID
         book = Books.query.get(book_id)
         if not book:
@@ -116,11 +118,16 @@ class ManageBook(Resource):
             if col.name in formData:
                 ## Check if valid Author or Section
                 if col.name in ['s_id', 'a_id']: 
-                    if (not Sections.query.get(formData[col.name])):
+                    new_section = Sections.query.get(formData[col.name])
+                    old_section = Sections.query.get(book.s_id)
+                    if (not new_section):
                         return {'message': {'error': 'Section or Author Not Found'}}, 404   
-                    elif col.name == 'a_id':
+                    elif book.s_id != int(formData[col.name]):      ## Change sections
+                        old_section.book_count-=1
+                        new_section.book_count+=1
+                    if col.name == 'a_id':
                         author = Author.query.get(formData['a_id'])     ## Add Author Book relationship
-                        print(author)
+                        # print(author)
                         book.writer = [author]
                 ## PDF price greater than 0
                 if col.name=='pdf_price' and int(formData[col.name])<=0:
@@ -165,6 +172,7 @@ class ManageBook(Resource):
 
 class Books_in_Section(Resource):
     ## Display all books in section
+    @cache.cached()
     def get(self, section_id):
         books = Books.query.filter_by(s_id=section_id).all()
         return marshal(books, book_field), 200

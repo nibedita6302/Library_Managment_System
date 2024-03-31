@@ -7,6 +7,7 @@ from flask_login import current_user
 from flask_security import auth_required, roles_required
 
 from application.models.books import Sections, Books
+from application.redis_cache import cache
 
 section_field = {
     's_id': fields.Integer,
@@ -17,6 +18,7 @@ section_field = {
 
 ## SECTION CRUD
 class ManageSections(Resource):
+    @cache.cached()
     def get(self, section_id):      ## View Section by ID
         section = Sections.query.get(section_id)
         if section is None:      
@@ -99,6 +101,7 @@ class ManageSections(Resource):
         return {'message': {'success': 'Deleted Section'}}, 200
 
 class DisplaySections(Resource):
+    @cache.cached()
     def get(self):      ## Display all Sections
         if current_user:
             if current_user.roles == ['librarian']:

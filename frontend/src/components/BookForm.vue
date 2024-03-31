@@ -24,12 +24,12 @@
                     <input v-else-if="f.type=='number'" :type="f.type" :id="f.id" :min="f.min" :step="f.step" 
                     :placeholder="placeholder(f.id)" v-model="f.data"/>
                     <select v-else-if="f.type=='select' && f.id=='a_id'" :id="f.id"  v-model="f.data" >
-                        <option v-for="a in author_data" name="{{a.a_id}}" :value="a.a_id" :key="a.a_id">
+                        <option v-for="a in author_data" :id="a.a_id" :value="a.a_id" :key="a.a_id">
                             {{ a.a_name }}
                         </option>
                     </select>
                     <select v-else-if="f.type=='select' && f.id=='s_id'" :id="f.id"  v-model="f.data" >
-                        <option v-for="s in section_data" name="{{s.s_id}}" :value="s.s_id" :key="s.s_id">
+                        <option v-for="s in section_data" :id="s.s_id" :value="s.s_id" :key="s.s_id" >
                             {{ s.s_name }}
                         </option>
                     </select>
@@ -48,6 +48,7 @@ export default{
     name: 'BookForm',
     data(){
         return{
+            section_id: this.$route.params.section_id,
             book_id: this.$route.params.book_id,
             token: localStorage.getItem('auth_token'),
             book_data: {},
@@ -74,9 +75,11 @@ export default{
         },
         selectAPI(){
             var newData = new FormData()
-            const image = document.getElementById('s_image')
+            const image = document.getElementById('b_image')
+            // console.log(image, 'image')
             if (image && image.files.length>0) {
-                newData.append("s_image",image.files[0]);
+                // console.log(image.files[0])
+                newData.append("b_image",image.files[0]);
             }
             for(let f in this.form_fields){
                 if (this.form_fields[f].data!=''){
@@ -92,6 +95,7 @@ export default{
                 }
             }
             // for (var p of newData.entries()){console.log(p[0],p[1])}
+            // console.log(newData.get('s_image'))
             if (this.book_id==null){this.createBook(newData);}
             else {this.updateBook(newData)}
         },
@@ -141,7 +145,7 @@ export default{
                 this.book_data = data.book_details;  // set output
             }catch(error){console.log(error);} 
         },
-        async fetchAuthorByID(){
+        async fetchAllAuthor(){
             try{
                 const res = await fetch('http://localhost:8000/api/all-authors', {
                     method: 'GET',
@@ -151,9 +155,10 @@ export default{
                 if (!res.ok) { throw Error("HTTP Error at fetch Book by ID:"+res.status) }
                 const data = await res.json() ;
                 this.author_data = data;  // set output
+                // console.log(this.author_data)
             }catch(error){console.log(error);} 
         },
-        async fetchSectionByID(){
+        async fetchAllSection(){
             try{
                 const res = await fetch('http://localhost:8000/api/home/sections', {
                     method: 'GET',
@@ -162,16 +167,14 @@ export default{
                 })
                 if (!res.ok) { throw Error("HTTP Error at fetch Book by ID:"+res.status) }
                 const data = await res.json() ;
-                this.section_data = data;  // set output
+                this.section_data = data;  // set output 
             }catch(error){console.log(error);} 
         },
     },
     created(){
-        if (this.book_id!=null){ 
-            this.fetchBookByID(); 
-            this.fetchAuthorByID();
-            this.fetchSectionByID();
-        }
+        this.fetchAllAuthor();
+        this.fetchAllSection();
+        if (this.book_id!=null) { this.fetchBookByID(); }
     }
 }
 </script>

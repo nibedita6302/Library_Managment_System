@@ -6,13 +6,31 @@
         <div class="row row-col-2 p-2">
             <div class="col-sm-6">
                 <h5>Section Popularity Among Users</h5>
-                <img :src="require('@/assets/graphs/'+stats_data.section_read_path)" height="400" width="600"/>
+                <img :src="section_read_path" height="400" width="600"/>
             </div>
             <div class="col-sm-6">
                 <h5>Section Wise Revenue Generation Distribution</h5>
-                <img :src="require('@/assets/graphs/'+stats_data.section_revenue_path)" height="400" width="400"/>
+                <img :src="section_revenue_path" height="400" width="400"/>
             </div>
         </div>
+    </div>
+    <div class="container ">
+        <h5>Active User List</h5>
+        <table class="table table-danger table-striped table-sm">
+            <thead>
+                <tr class="align-center">
+                    <th>Username</th>
+                    <th>Total Book Issues</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{ active_user }}
+                <tr v-for="user in active_user" :key="user.name" class="align-center">
+                    <td>{{ user.name }}</td>
+                    <td>{{ user.book_issues }}</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </template>
 
@@ -23,11 +41,16 @@ export default{
         return {
             user: JSON.parse(localStorage.getItem('user')),
             token: localStorage.getItem('auth_token'),
-            stats_data: {},
-
+            section_read_path: '',
+            section_revenue_path: '',
+            active_user: []
         }
     }, 
     methods:{
+        getImage(path){
+            // console.log('require', import('@/assets/graphs/'+path))
+            return require('@/assets/graphs/'+path);
+        },
         async getLibrarianStats(){
             try{
                 const res = await fetch('http://localhost:8000/api/librarian-stats', {
@@ -40,15 +63,14 @@ export default{
                 })
                 if (!res.ok) { throw Error("HTTP Error at Lib Stats:"+res.status) }
                 const data = await res.json() ;
-                // console.log(data)
-                this.stats_data = data;  // set output
-                // console.log(this.stats_data, 'fetch')
+                this.section_read_path = this.getImage(data.section_read_path);         // set output
+                this.section_revenue_path = this.getImage(data.section_revenue_path);
+                this.active_user = data.active_user;
             }catch(error){console.log(error);} 
         }
     },
     created(){
         this.getLibrarianStats();
-        // console.log('here created', this.stats_data)
     }
 }
 </script>
@@ -56,5 +78,8 @@ export default{
 <style scoped>
 h3, h5{
     text-align: center;
+}
+table{
+    padding: 100px;
 }
 </style>

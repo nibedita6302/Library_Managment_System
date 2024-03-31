@@ -36,10 +36,14 @@
                 <i class="bi bi-shield-fill-plus"></i>
                 Add New Section
             </button> &nbsp;
-            <button class="btn" id="btn-author">
-                <i class="bi bi-patch-plus-fill"></i>
-                Add New Author
-            </button>
+            <button class="btn" id="btn-author" @click="go_to_author">
+                <i class="bi bi-send-arrow-up-fill"></i>
+                Go to Authors Page
+            </button> &nbsp;
+            <button class="btn" id="btn-book"  @click="go_to_create_book">
+                <i class="bi bi-plus-circle-fill"></i>
+                Add New Book
+            </button> 
         </div>
         <hr>
         <div class="row row-col-3 g-0">
@@ -98,6 +102,9 @@ export default{
         go_to_create(){
             this.$router.push('/section/create')
         },
+        go_to_create_book(){
+            this.$router.push('/book/create');
+        },
         async deleteSection(s_id){
             try{
                 const res = await fetch('http://localhost:8000/api/section/delete/'+s_id, {
@@ -113,6 +120,9 @@ export default{
                 if (res.status==404 || res.status==409){ this.message=data.message.error }
                 else {this.message=data.message.success}
             }catch(error){console.log(error);} 
+        }, 
+        go_to_author(){
+            this.$router.push('/authors')
         }
     },
     created(){
@@ -133,5 +143,8 @@ button#btn-author{
 }
 button#btn-section{
     background-color: lightsalmon;
+}
+button#btn-book{
+    background-color: greenyellow;
 }
 </style>

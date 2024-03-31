@@ -24,7 +24,8 @@ section_revenue_field = {
 }
 
 active_users_field = {
-    'name': fields.String
+    'name': fields.String,
+    'book_issue': fields.Integer
 }
 
 class LibrarianAnalytics(Resource): 
@@ -46,7 +47,7 @@ class LibrarianAnalytics(Resource):
         section_revenue_path = lib_pie_chart(section_revenue, 'Section Wise Revenue', 'lib_section_revenue_pie')
         
         ## Most Active Users
-        active_users = db.session.query(Users.name)\
+        active_users = db.session.query(Users.name, db.func.count('*').label('book_issues'))\
                         .join(UserActivity, Users.id==UserActivity.user_id)\
                         .group_by(Users.id).order_by(db.func.count('*').desc()).all()
 

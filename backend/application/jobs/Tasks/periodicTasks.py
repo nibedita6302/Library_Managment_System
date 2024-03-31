@@ -7,6 +7,7 @@ from utils.sendEmails import sendEmail
 from application.database import db
 from application.models.users import Users
 from application.models.user_book_activity import IssueRequest
+from application.models.users import Users
 
 # print("crontab ", crontab)
 
@@ -27,6 +28,9 @@ def issue_clean_up():
     count = 0
     for i in issues:
         if i.status!=2:
+            db.session.delete(i)
+            count+=1
+        elif not Users.query.get(i.user_id):
             db.session.delete(i)
             count+=1
     db.session.commit()

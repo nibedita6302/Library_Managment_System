@@ -9,6 +9,7 @@ from flask_security import auth_required, roles_required
 from application.models.books import Sections, Books
 from application.models.user_book_activity import UserActivity, IssueRequest, UserBook
 from application.models.users import Users
+from utils.generateGraphs import lib_bar_chart, lib_pie_chart
 from application.jobs.Tasks.bookIssueStatusEmail import *
 
 
@@ -23,10 +24,11 @@ section_revenue_field = {
 }
 
 active_users_field = {
-    'name': fields.String
+    'name': fields.String,
+    'book_issue': fields.Integer
 }
 
-class LibrarianAnalytics(Resource):
+class LibrarianAnalytics(Resource): 
     @auth_required('token')
     @roles_required('librarian')
     def get(self):      
@@ -35,21 +37,23 @@ class LibrarianAnalytics(Resource):
                                             db.func.sum(Books.total_issue).label('count'))\
                                 .filter(Books.s_id==Sections.s_id)\
                                 .group_by(Sections.s_id).all()
+        section_read_path = lib_bar_chart(section_read_count, 'Section Popularity in Users', 'lib_section_read_bar')
         
         ## Section wise revenue distribution
         section_revenue =  db.session.query(UserActivity.section_name, 
                                             db.func.sum(UserActivity.bought_price).label('revenue'))\
                             .filter(Sections.s_name==UserActivity.section_name)\
                             .group_by(UserActivity.section_name).all()
-
+        section_revenue_path = lib_pie_chart(section_revenue, 'Section Wise Revenue', 'lib_section_revenue_pie')
+        
         ## Most Active Users
-        active_users = db.session.query(Users.name)\
+        active_users = db.session.query(Users.name, db.func.count('*').label('book_issues'))\
                         .join(UserActivity, Users.id==UserActivity.user_id)\
                         .group_by(Users.id).order_by(db.func.count('*').desc()).all()
 
         return {
-            'section_read_distribution': marshal(section_read_count, section_read_field),
-            'section_revenue': marshal(section_revenue, section_revenue_field),
+            'section_read_path': section_read_path,
+            'section_revenue_path': section_revenue_path,
             'active_users': marshal(active_users, active_users_field)
         }, 200
         

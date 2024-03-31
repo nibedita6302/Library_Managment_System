@@ -8,6 +8,8 @@ import IssuesView from '@/views/IssuesView.vue';
 import SectionForm from '@/components/SectionForm.vue';
 import BookForm from '@/components/BookForm.vue';
 import AuthorsPage from '@/views/AuthorsPage.vue';
+import AnalyticsView from '@/views/AnalyticsView.vue';
+import MyStatsView from '@/views/MyStatsView.vue';
 
 const routes = [
   { path: '/', name: 'HomeView' ,component: HomeView },
@@ -21,9 +23,9 @@ const routes = [
   { path: '/book/:book_id/update', component: BookForm},
   { path: '/book/create', component: BookForm},
   { path: '/authors', component: AuthorsPage},
-  // { path: '/mystats', component: MyStatsView },
+  { path: '/mystats', component: MyStatsView },
   // { path: '/myprofile', component: MyProfileView },
-  // { path: '/analytics', component: AnalyticsView },
+  { path: '/analytics', component: AnalyticsView },
   { path: '/login', name: 'LoginView' ,component: LoginView },
 
 ]

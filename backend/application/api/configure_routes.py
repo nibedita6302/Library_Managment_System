@@ -20,7 +20,7 @@ def config_all_resource(api):
 def user_api(api):
     api.add_resource(UserRegister, "/user-registration")
     api.add_resource(UserProfile, "/user/profile", "/user/profile/update", 
-                     "/user/profile/delete/<int:confirm>")
+                     "/user/profile/delete")
 
 def section_api(api):
     api.add_resource(ManageSections, '/section/<int:section_id>', "/section/create", 

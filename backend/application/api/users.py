@@ -45,7 +45,7 @@ class UserProfile(Resource):
         user = Users.query.get(current_user.id)
         if user:
             if user.roles[0].name == 'librarian':
-                return {'message': {'error': 'Confidential Information'}}, 401
+                return {'message': {'error': 'Confidential Information'}}, 400
             else:
                 user_books = user.user_book
                 current_issues, total_downloads = 0, 0
@@ -61,7 +61,7 @@ class UserProfile(Resource):
                     'total_issues': len(user_books),
                     'current_issues': current_issues,
                     'total_downloads': total_downloads 
-                }
+                }, 200
             
         return {'message': {'error': 'User does not exists or not logged in.'}}, 400 
 
@@ -75,7 +75,7 @@ class UserProfile(Resource):
             else:
                 jsonData = request.get_json()
                 if len(jsonData)>0:
-                    if 'email' in jsonData:                                                     ## Check if email in form 
+                    if ('email' in jsonData) and (jsonData['email']!=''):                       ## Check if email in form 
                         if Users.query.filter_by(email=jsonData['email']).first() is None:      ## Email is Unique
                             if validate_email(jsonData['email']):                               ## If valid email (utils)
                                 user.email = jsonData['email']
@@ -90,23 +90,19 @@ class UserProfile(Resource):
             
             db.session.commit()
             return {'message': {'success': 'Successfull Update!'}}, 200
-        
         return {'message': {'error': 'User does not exists or not logged in.'}}, 400 
 
     @auth_required('token')
     @roles_required('user')
-    def delete(self, confirm):     ## Delete existing user 
+    def delete(self):     ## Delete existing user 
         user = Users.query.get(current_user.id)
         if user:
             if user.roles[0].name == 'librarian':
-                return {'message': {'error': 'Unauthorized Delete Operation'}}, 401
-            elif confirm:
-                user_role = db.session.query(RoleUsers).filter_by(user_id=current_user.id).first()
-                print(user_role)
-                db.session.delete(user)
-                #db.session.delete(user_role)
-                db.session.commit()
-                return {'message': {'success': 'Deleted User'}}, 200
-            else:
-                return {'message': {'success': 'Canceled Delete'}}, 200
+                return {'message': {'error': 'Unauthorized Delete Operation'}}, 400
+            user_role = db.session.query(RoleUsers).filter_by(user_id=current_user.id).first()
+            print(user_role)
+            db.session.delete(user)
+            #db.session.delete(user_role)
+            db.session.commit()
+            return {'message': {'success': 'Deleted User'}}, 200
         

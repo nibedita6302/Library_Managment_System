@@ -14,24 +14,6 @@
             </div>
         </div>
     </div>
-    <div class="container ">
-        <h5>Active User List</h5>
-        <table class="table table-danger table-striped table-sm">
-            <thead>
-                <tr class="align-center">
-                    <th>Username</th>
-                    <th>Total Book Issues</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{ active_user }}
-                <tr v-for="user in active_user" :key="user.name" class="align-center">
-                    <td>{{ user.name }}</td>
-                    <td>{{ user.book_issues }}</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
 </template>
 
 <script>
@@ -42,8 +24,7 @@ export default{
             user: JSON.parse(localStorage.getItem('user')),
             token: localStorage.getItem('auth_token'),
             section_read_path: '',
-            section_revenue_path: '',
-            active_user: []
+            section_revenue_path: ''
         }
     }, 
     methods:{
@@ -65,7 +46,6 @@ export default{
                 const data = await res.json() ;
                 this.section_read_path = this.getImage(data.section_read_path);         // set output
                 this.section_revenue_path = this.getImage(data.section_revenue_path);
-                this.active_user = data.active_user;
             }catch(error){console.log(error);} 
         }
     },

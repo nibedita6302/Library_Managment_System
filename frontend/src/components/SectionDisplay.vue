@@ -30,7 +30,7 @@
         </div>
     </div>
 
-    <div class="container p-4">
+    <div class="container p-3">
         <div v-if="isLibrarian()" class="d-flex justify-content-center">
             <button class="btn" id="btn-section"  @click="go_to_create">
                 <i class="bi bi-shield-fill-plus"></i>
@@ -46,8 +46,8 @@
             </button> 
         </div>
         <hr>
-        <div class="row row-col-3 g-0">
-            <div class="col-sm-4 card text-white me-3" v-for="s in sections" :key="s.s_id">
+        <div class="row row-col-3 g-3 p-2 d-flex justify-content-center">
+            <div class="col-sm-3 card text-white me-4" v-for="s in sections" :key="s.s_id">
                 <div style="transform: rotate(0);">
                     <img :src="require('@/assets/upload/'+s.s_image)" class="card-img" :alt="s.s_name">
                     <div class="card-img-overlay">

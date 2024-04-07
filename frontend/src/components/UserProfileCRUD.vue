@@ -23,7 +23,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success" data-bs-dismiss="modal" aria-label="Close"
-                    data-bs-toggle="modal" data-bs-target="#info5" @click="deleteProfile()">
+                    data-bs-toggle="modal" data-bs-target="#info8" @click="deleteProfile()">
                         Confirm
                     </button> 
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -71,7 +71,6 @@ export default{
             username: '',
             email: '', 
             message: ''
-
         }
     },
     methods:{

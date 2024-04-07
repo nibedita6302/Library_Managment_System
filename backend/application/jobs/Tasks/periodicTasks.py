@@ -13,13 +13,12 @@ from application.models.users import Users
 
 @celery.on_after_finalize.connect
 def setup_periodic_tasks(sender, **kwargs):
-    #sender.add_periodic_task(2.0, print_current_time_job.s(), name='add every 10')
-    sender.add_periodic_task(crontab(hour=21, minute=24), 
+    sender.add_periodic_task(crontab(hour=22, minute=31), 
                              daily_reminder.s(), name='Daily Reminder for not active Users')
-    sender.add_periodic_task(crontab(hour=21, minute=25, day_of_month='31', month_of_year='*'), 
+    sender.add_periodic_task(crontab(hour=22, minute=33, day_of_month='7', month_of_year='*'), 
                              monthly_activity_report.s(), name='Monthly User Activity Report')
-    sender.add_periodic_task(crontab(hour=21, minute=25), 
-                             issue_clean_up.s(), name='Daily Reminder for not active Users')
+    sender.add_periodic_task(crontab(hour=22, minute=34), 
+                             issue_clean_up.s(), name='Cleaning non pending Issue Requests')
 
 ## Delete IssueRequest if not PENDING - Celery (Once a day)
 @celery.task()
@@ -41,14 +40,16 @@ def daily_reminder():
     users = Users.query.all()
     count = 0
     for user in users:
+        print(user)
         if user.id!=1:
             today = datetime.now().strftime("%d/%m/%Y")
-            activity = user.latest_activity.strftime("%d/%m/%Y")
+            # print(user.latest_activity)
+            activity = user.latest_activity
             # print(today, activity)
-            if today!=activity:
+            if (activity is None) or (today!=activity.strftime("%d/%m/%Y")):
                 sendEmail(user.id)
                 count+=1
-    print('Sent Emails to', count, 'people out of total', len(users)-1)   
+    print('Sent Emails to '+ str(count)+' people out of total '+str(len(users)-1))   
 
 @celery.task()
 def monthly_activity_report():

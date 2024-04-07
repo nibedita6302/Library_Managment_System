@@ -97,11 +97,12 @@ class UserProfile(Resource):
     @roles_required('user')
     def delete(self):     ## Delete existing user 
         user = Users.query.get(current_user.id)
+        logout_user()       ## LOGOUT USER BEFORE DELETE
         if user:
             if user.roles[0].name == 'librarian':
                 return {'message': {'error': 'Unauthorized Delete Operation'}}, 400
-            user_role = db.session.query(RoleUsers).filter_by(user_id=current_user.id).first()
-            user_actv = UserActivity.query.filter(user_id=current_user.id).all()
+            # user_role = db.session.query(RoleUsers).filter_by(user_id=current_user.id).first()
+            user_actv = UserActivity.query.filter_by(user_id=user.id).all()
             for u in user_actv:
                 db.session.delete(u) 
             db.session.delete(user)

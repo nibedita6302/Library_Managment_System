@@ -16,28 +16,28 @@ This is a Linux based application for Online Library System including both User 
 Open Linux terminal. Make sure to have __python3__ and __pip3__ installed. Follow the following command to 
 start the Online Grocery Store application.
 
-### ------ TERMINAL 1 ------
+#### ------ TERMINAL 1 ------
 ```
 $ bash local_setup.sh  ## creates environment and installs requirements 
 $ bash local_run.sh		## runs main.py
 ```
 
-### ------ TERMINAL 2 ------
+#### ------ TERMINAL 2 ------
 ``` 
 $ redis-server  # start redis server
 ```
 
-### ------ TERMINAL 3 ------
+#### ------ TERMINAL 3 ------
 ``` 
 $ bash local_workers.sh  # start celery worker
 ```
 
-### ------ TERMINAL 4 ------
+#### ------ TERMINAL 4 ------
 ``` 
 $ bash local_beat.sh  # start celery worker
 ```
 
-### ------ TERMINAL 5 ------
+#### ------ TERMINAL 5 ------
 ```
 $ cd frontend/
 $ npm run serve  # start vue.js server

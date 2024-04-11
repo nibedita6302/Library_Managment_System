@@ -33,10 +33,10 @@
           </li>
 
           <!-- Login & Logout -->
-          <li class="nav-item">
+          <li v-if="this.getRole()==null" class="nav-item">
             <router-link to='/login' active-class="active" class="nav-link">Login</router-link>
           </li>
-          <li class="nav-item">
+          <li v-else class="nav-item">
             <LogoutUser />
           </li>
         </ul>

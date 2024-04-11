@@ -59,6 +59,22 @@ class Issue_Request_Approval(Resource):
             if jsonData['approval']==1:             ## Accept Request
                 ir1.status = jsonData['approval']
 
+                issue_instance = UserBook.query.filter_by(b_id=book_id, user_id=user_id, return_date=None).first()
+                if issue_instance is not None:      ## Check if book already exists
+                    ir1.status = 0
+                    db.session.commit()
+                    ## Send mail to User - Celery
+                    issue_approval_email.delay(user_id, book.b_name, "DECLINED")
+                    return {'message':{'success':'Issue Declined! Book Already Issued by user.'}}, 200
+                
+                active_issue_count = UserBook.query.filter_by(user_id=user_id, return_date=None).all()
+                if len(active_issue_count)==5:      ## Check if book limit reached
+                    ir1.status = 0
+                    db.session.commit()
+                    ## Send mail to User - Celery
+                    issue_approval_email.delay(user_id, book.b_name, "DECLINED")
+                    return {'message':{'success':'Issue Declined! User has reached max limit 5 for issues.'}}, 200
+                
                 ## create UserBook association
                 user_book = UserBook(b_id=book_id, user_id=user_id) 
                 db.session.add(user_book)

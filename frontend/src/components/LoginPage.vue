@@ -83,8 +83,9 @@ export default {
                         'role':data.role,
                         'email':data.email
                     }
-                    localStorage.setItem('user', JSON.stringify(user));  
-                    this.$router.go();      // refreshing
+                    localStorage.setItem('user', JSON.stringify(user)); 
+                    this.$router.go(); 
+                    this.$router.push('/');      // refreshing
                 }
             }catch(error){console.log(error);} 
         },
@@ -96,6 +97,9 @@ export default {
             }
             else { this.login(); }
         }
+    },
+    beforeRouteEnter(){
+        this.$router.go();
     }
 }
 </script>

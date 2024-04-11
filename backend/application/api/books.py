@@ -39,7 +39,7 @@ review_field = {
 
 
 class ManageBook(Resource):
-    @cache.cached() 
+    @cache.cached(300) 
     def get(self, book_id):     ## Get book detail by book ID
         book = Books.query.get(book_id)
         if not book:
@@ -172,7 +172,7 @@ class ManageBook(Resource):
 
 class Books_in_Section(Resource):
     ## Display all books in section
-    @cache.cached()
+    @cache.cached(300)
     def get(self, section_id):
         books = Books.query.filter_by(s_id=section_id).all()
         return marshal(books, book_field), 200

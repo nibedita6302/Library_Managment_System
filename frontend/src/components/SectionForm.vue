@@ -99,7 +99,10 @@ export default{
                 if (!res.ok && res.status!=400) { throw Error("HTTP Error at Section Update:"+res.status) }
                 const data = await res.json() ;
                 if (res.status==400){ this.message=data.message.error }
-                else {this.message=data.message.success}
+                else {
+                    this.message=data.message.success;
+                    this.$router.push('/')
+                }
             }catch(error){console.log(error);} 
         }
     },

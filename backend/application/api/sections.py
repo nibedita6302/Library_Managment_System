@@ -18,7 +18,7 @@ section_field = {
 
 ## SECTION CRUD
 class ManageSections(Resource):
-    @cache.cached()
+    @cache.cached(300)
     def get(self, section_id):      ## View Section by ID
         section = Sections.query.get(section_id)
         if section is None:      
@@ -101,9 +101,10 @@ class ManageSections(Resource):
         return {'message': {'success': 'Deleted Section'}}, 200
 
 class DisplaySections(Resource):
-    @cache.cached()
+    @cache.cached(300)
     def get(self):      ## Display all Sections
         if current_user:
+            # print(current_user.roles)
             if current_user.roles == ['librarian']:
                 section = Sections.query.all()          ## Display empty Section for Librarian Only!!
             else:

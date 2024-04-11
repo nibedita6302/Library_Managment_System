@@ -16,7 +16,7 @@ author_field = {
 }
 
 class AuthorManagement(Resource):
-    @cache.cached()
+    @cache.cached(100)
     def get(self, author_id):       ## Get Author details 
         author = Author.query.get(author_id)
         if not author:

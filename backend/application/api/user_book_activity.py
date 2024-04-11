@@ -54,9 +54,9 @@ class Issue_Book_Request(Resource):
         if not book:
             return {'message':{'error':'Issue Request Declines. Book does not exist'}}, 400
 
-        user_books = UserBook.query.filter_by(user_id=current_user.id,      ## Book issued by user 
-                                              b_id=book_id,                 ## But not returned yet
-                                              return_date=None).first()
+        user_books = UserBook.query.filter_by(user_id=current_user.id, b_id=book_id,  ## Book issued by user 
+                                                return_date=None).first()             ## But not returned yet
+        print(user_books)
         if user_books is not None:
             return {'message':{'error':'You have already issued this book. Visit MyBooks to read.'}}, 400
         
@@ -85,10 +85,14 @@ class Issue_Book_Request(Resource):
         book = Books.query.get(user_book.b_id)
         user_actv = UserActivity.query.filter_by(user_id=current_user.id, book_name=book.b_name,
                                                   return_date=None).first()
+        ir = IssueRequest.query.filter_by(user_id=user_book.user_id, b_id=book.b_id).first()
         if (user_book is None) or (user_book.user_id!=current_user.id):     ## Issue does not exists for current user
             return {'message':{'error':'This book is not issued by you, yet.'}}, 400
         if user_book.return_date is not None:                         ## Already returned book
             return {'message':{'error':'The book has already been returned!'}}, 400
+        
+        if ir is not None:
+            db.session.delete(ir)
         ## Set return date in UserBooks and UserActivity
         user_book.return_date = datetime.now()
         user_actv.return_date = datetime.now()

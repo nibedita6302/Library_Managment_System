@@ -43,7 +43,8 @@ $ cd frontend/
 $ npm run serve  # start vue.js server
 ```
 > [!TIP]
-> Open url *http://localhost:8080/* for Home page and explore!
+> - Take a look at _Project Report.pdf_ for more details on methodology and tech stack.
+> - Open url *http://localhost:8080/* for Home page and explore! 
 ---------------------------------------------------
 > [!IMPORTANT]
 >There is only One Admin allowed in the application with following credentials

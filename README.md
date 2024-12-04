@@ -2,7 +2,8 @@
 This is a Linux based application for Online Library System including both User and Librarian functionalities. 
 
 > [!IMPORTANT]
-> Major tools used: Python Flask, SQLite, VueJS, Redis and Celery. Make sure to have all the above installed before running the application.
+> - Major tools used: Python Flask, SQLite, VueJS, Redis and Celery. Make sure to have all the above installed before running the application. 
+> - Also read [Project Report,pdf](https://github.com/nibedita6302/Library_Managment_System/blob/main/Project%20Report.pdf) for detailed insight into dataflow and database structure. Click the link in pdf to Watch video explanation.
 
 ## Tech Stack
 ||**Backend**| <img alt="Static Badge" src="https://img.shields.io/badge/Python-blue?style=plastic&logo=python&logoColor=yellow" height="25"> <img alt="Static Badge" src="https://img.shields.io/badge/SQLite_3-brightgreen?style=plastic&logo=sqlite&logoColor=white" height="25"> <img alt="Static Badge" src="https://img.shields.io/badge/SQLAlchemy-%23eb3a1f?style=plastic&logo=SQLAlchemy&logoColor=black" height="25"> <img alt="Static Badge" src="https://img.shields.io/badge/Flask-white?style=plastic&logo=flask&logoColor=black" height="25"> <img alt="Static Badge" src="https://img.shields.io/badge/Flask_Security_too-black?style=plastic&logo=flask&logoColor=white" height="25"> <img alt="Static Badge" src="https://img.shields.io/badge/Redis-red?style=plastic&logo=redis&logoColor=white" height="25"> <img alt="Static Badge" src="https://img.shields.io/badge/REST_API-%23f4f8af?style=plastic&logo=academia&logoColor=purple" height="25"> <img alt="Static Badge" src="https://img.shields.io/badge/Celery-brightgreen?style=plastic&logo=celery&logoColor=black" height="25"> ||
